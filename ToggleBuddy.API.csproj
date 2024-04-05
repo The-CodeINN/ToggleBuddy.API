@@ -22,6 +22,8 @@
   <ItemGroup>
     <Folder Include="Models\Domain\" />
     <Folder Include="Models\DTOs\" />
+    <Folder Include="Mappings\" />
+    <Folder Include="Respositories\" />
   </ItemGroup>
 
 </Project>
