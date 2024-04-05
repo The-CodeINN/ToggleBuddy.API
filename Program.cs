@@ -1,4 +1,7 @@
 
+using Microsoft.EntityFrameworkCore;
+using ToggleBuddy.API.Data;
+
 namespace ToggleBuddy.API
 {
     public class Program
@@ -13,6 +16,10 @@ namespace ToggleBuddy.API
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();
+
+            // adding database
+            builder.Services.AddDbContext<ToggleBuddyDbContext>(options =>
+            options.UseSqlServer(builder.Configuration.GetConnectionString("ToggleBuddyConnectionString")));
 
             var app = builder.Build();
 
