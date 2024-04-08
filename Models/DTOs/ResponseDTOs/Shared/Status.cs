@@ -1,4 +1,4 @@
-﻿namespace ToggleBuddy.API.Models.DTOs.RequestDTOs.Shared
+﻿namespace ToggleBuddy.API.Models.DTOs.ResponseDTOs.Shared
 {
     public class Status
     {
