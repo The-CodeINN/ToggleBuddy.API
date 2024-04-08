@@ -2,20 +2,17 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
-using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using ToggleBuddy.API.Data;
 
 #nullable disable
 
-namespace ToggleBuddy.API.Migrations
+namespace ToggleBuddy.API.Migrations.ToggleBuddyDb
 {
     [DbContext(typeof(ToggleBuddyDbContext))]
-    [Migration("20240405101306_Intial Migration")]
-    partial class IntialMigration
+    partial class ToggleBuddyDbContextModelSnapshot : ModelSnapshot
     {
-        /// <inheritdoc />
-        protected override void BuildTargetModel(ModelBuilder modelBuilder)
+        protected override void BuildModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
