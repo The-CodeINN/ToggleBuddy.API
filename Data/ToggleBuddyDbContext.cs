@@ -20,7 +20,7 @@ namespace ToggleBuddy.API.Data
             modelBuilder.Entity<IdentityUserRole<string>>().HasKey(x => new { x.UserId, x.RoleId });
         }
 
-        public DbSet<User> Users { get; set; }
+        public new DbSet<User> Users { get; set; }
         public DbSet<Project> Projects { get; set; }
     }
 }
