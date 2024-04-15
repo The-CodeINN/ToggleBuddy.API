@@ -1,5 +1,7 @@
 ﻿using AutoMapper;
 using ToggleBuddy.API.Models.Domain;
+using ToggleBuddy.API.Models.DTOs.RequestDTOs;
+using ToggleBuddy.API.Models.DTOs.ResponseDTOs;
 
 namespace ToggleBuddy.API.Mappings
 {
@@ -8,6 +10,8 @@ namespace ToggleBuddy.API.Mappings
         public AutoMapperProfile()
         {
             CreateMap<User, UserDto>().ReverseMap();
+            CreateMap<ProjectRequestDto, Project>().ReverseMap();
+            CreateMap<Project, ProjectResponseDto>().ReverseMap();
         }
     }
 }
