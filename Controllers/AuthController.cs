@@ -36,6 +36,7 @@ namespace ToggleBuddy.API.Controllers
 
         }
         [HttpPost]
+        [ValidateModel]
         [Route("Register")]
 
         public async Task<IActionResult> Register([FromBody] RegisterRequestDto registerRequestDto)
@@ -65,6 +66,7 @@ namespace ToggleBuddy.API.Controllers
         }
 
         [HttpPost]
+        [ValidateModel]
         [Route("Login")]
         public async Task<IActionResult> Login([FromBody] LoginRequestDto loginRequestDto)
         {
