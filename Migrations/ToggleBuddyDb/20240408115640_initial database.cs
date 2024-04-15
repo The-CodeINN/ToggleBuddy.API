@@ -2,10 +2,10 @@
 
 #nullable disable
 
-namespace ToggleBuddy.API.Migrations
+namespace ToggleBuddy.API.Migrations.ToggleBuddyDb
 {
     /// <inheritdoc />
-    public partial class IntialMigration : Migration
+    public partial class initialdatabase : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
