@@ -82,7 +82,16 @@ namespace ToggleBuddy.API.Controllers
         [Route("{id:Guid}")]
         public async Task<IActionResult> GetProjectById([FromRoute] Guid id)
         {
-            var project = await _projectRepository.GetProjectByIdForCurrentUserAsync(id, User?.Identity?.Name);
+            var currentUser = await _userRepository.GetCurrentUserAsync(User);
+            if (currentUser == null)
+            {
+                _apiResponse.Message = "User not found";
+                _apiResponse.Result = null;
+                _apiResponse.Status = ResponseStatus.Error;
+                return NotFound(_apiResponse);
+            }
+
+            var project = await _projectRepository.GetProjectByIdForCurrentUserAsync(id, currentUser.Id);
             if (project == null)
             {
                 _apiResponse.Message = "Project not found";
@@ -99,13 +108,23 @@ namespace ToggleBuddy.API.Controllers
             return Ok(_apiResponse);
         }
 
+
         // PUT: api/Project/5
         [HttpPut]
         [Route("{id:Guid}")]
         [ValidateModel]
         public async Task<IActionResult> UpdateProjectById([FromRoute] Guid id, [FromBody] ProjectRequestDto projectRequestDto)
         {
-            var project = await _projectRepository.GetProjectByIdForCurrentUserAsync(id, User?.Identity?.Name);
+            var currentUser = await _userRepository.GetCurrentUserAsync(User);
+            if (currentUser == null)
+            {
+                _apiResponse.Message = "User not found";
+                _apiResponse.Result = null;
+                _apiResponse.Status = ResponseStatus.Error;
+                return NotFound(_apiResponse);
+            }
+
+            var project = await _projectRepository.GetProjectByIdForCurrentUserAsync(id, currentUser.Id);
             if (project == null)
             {
                 _apiResponse.Message = "Project not found";
@@ -131,10 +150,18 @@ namespace ToggleBuddy.API.Controllers
         // DELETE: api/Project/5
         [HttpDelete]
         [Route("{id:Guid}")]
-        [ValidateModel]
         public async Task<IActionResult> DeleteProjectById([FromRoute] Guid id)
         {
-            var project = await _projectRepository.GetProjectByIdForCurrentUserAsync(id, User?.Identity?.Name);
+            var currentUser = await _userRepository.GetCurrentUserAsync(User);
+            if (currentUser == null)
+            {
+                _apiResponse.Message = "User not found";
+                _apiResponse.Result = null;
+                _apiResponse.Status = ResponseStatus.Error;
+                return NotFound(_apiResponse);
+            }
+
+            var project = await _projectRepository.GetProjectByIdForCurrentUserAsync(id, currentUser.Id);
             if (project == null)
             {
                 _apiResponse.Message = "Project not found";
@@ -152,5 +179,6 @@ namespace ToggleBuddy.API.Controllers
 
             return Ok(_apiResponse);
         }
+
     }
 }
