@@ -3,45 +3,41 @@ using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
+using ToggleBuddy.API.Models.Domain;
 using ToggleBuddy.API.Respositories.Interfaces;
 
 namespace ToggleBuddy.API.Respositories.Implementations
 {
     public class TokenRepository : ITokenRepository
     {
-        private readonly IConfiguration configuration;
+        private readonly IConfiguration _configuration;
 
-        public TokenRepository(IConfiguration configuration) 
+        public TokenRepository(IConfiguration configuration)
         {
-            this.configuration = configuration;
+            _configuration = configuration;
         }
 
-        // This method generates a JWT (JSON Web Token) for a given user and list of roles.
-        public string CreateJWTToken(IdentityUser user, List<string> roles)
+        public string CreateJWTToken(User user)
         {
-            // Create claims
-            var claims = new List<Claim>();
+            var claims = new List<Claim>
+            {
+                new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
+                new Claim(ClaimTypes.Name, user.FirstName + " " + user.LastName),
+            };
 
-            claims.Add(new Claim(ClaimTypes.Email, user.Email));
-
-            foreach (var role in roles) 
-            {   
-                claims.Add(new Claim(ClaimTypes.Role, role));
-            }
-
-            var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(configuration["Jwt:Key"]));
-
+            var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["Jwt:Key"]));
             var credentials = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
+            var expires = DateTime.UtcNow.AddMinutes(Convert.ToDouble(_configuration["Jwt:ExpireMinutes"]));
 
             var token = new JwtSecurityToken(
-                configuration["Jwt:Issuer"],
-                configuration["Jwt:Audience"],
+                _configuration["Jwt:Issuer"],
+                _configuration["Jwt:Audience"],
                 claims,
-                expires: DateTime.UtcNow.AddMinutes(15),
-                signingCredentials: credentials);
+                expires: expires,
+                signingCredentials: credentials
+            );
 
             return new JwtSecurityTokenHandler().WriteToken(token);
-
         }
     }
 }
