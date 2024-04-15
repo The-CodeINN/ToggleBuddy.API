@@ -5,6 +5,8 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
 using ToggleBuddy.API.Data;
+using ToggleBuddy.API.Mappings;
+using ToggleBuddy.API.Models.Domain;
 using ToggleBuddy.API.Respositories.Implementations;
 using ToggleBuddy.API.Respositories.Interfaces;
 
@@ -26,44 +28,52 @@ namespace ToggleBuddy.API
             // adding database
             builder.Services.AddDbContext<ToggleBuddyDbContext>(options =>
             options.UseSqlServer(builder.Configuration.GetConnectionString("ToggleBuddyConnectionString")));
-            // adding database for auth
-            builder.Services.AddDbContext<ToggleBuddyAuthDbContext>(options =>
-            options.UseSqlServer(builder.Configuration.GetConnectionString("ToggleBuddyAuthConnectionString")));
 
+            // adding repositories
             builder.Services.AddScoped<ITokenRepository, TokenRepository>();
+
             // Configure ASP.NET Core Identity services
-            builder.Services.AddIdentityCore<IdentityUser>()
+            builder.Services.AddIdentity<User, IdentityRole>()
                 .AddRoles<IdentityRole>()
-                .AddTokenProvider<DataProtectorTokenProvider<IdentityUser>>("ToggleBuddy")
-                .AddEntityFrameworkStores<ToggleBuddyAuthDbContext>()
+                .AddTokenProvider<DataProtectorTokenProvider<User>>("ToggleBuddy")
+                .AddEntityFrameworkStores<ToggleBuddyDbContext>()
                 .AddDefaultTokenProviders();
 
             builder.Services.Configure<IdentityOptions>(options =>
             {
                 // Customize password requirements
-                options.Password.RequireDigit = true;
-                options.Password.RequiredUniqueChars = 1;
-                options.Password.RequiredLength = 6;
+                options.SignIn.RequireConfirmedAccount = false;
+                options.Password.RequireDigit = false;
                 options.Password.RequireLowercase = false;
+                options.Password.RequireNonAlphanumeric = false;
                 options.Password.RequireUppercase = false;
-               
+                options.Password.RequiredLength = 6;
+                options.Password.RequiredUniqueChars = 1;
+                options.User.RequireUniqueEmail = true;
+
             });
+
+            // Adding automapper
+            builder.Services.AddAutoMapper(typeof(AutoMapperProfile));
+
             // adding authentication configuration
-            builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+            builder.Services.AddAuthentication(o =>
+            {
+                o.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+                o.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+                o.DefaultSignInScheme = JwtBearerDefaults.AuthenticationScheme;
+            })
                 .AddJwtBearer(options =>
                 options.TokenValidationParameters = new TokenValidationParameters
                 {
-                    // Validate the audience (recipient) of the token
-                    ValidateAudience = true,
-                    // Validate the issuer (who issued the token)
                     ValidateIssuer = true,
-                    // Validate the token's expiration time
+                    ValidateAudience = true,
                     ValidateLifetime = true,
                     ValidateIssuerSigningKey = true,
                     ValidIssuer = builder.Configuration["Jwt:Issuer"],
-                    ValidAudience = builder.Configuration["Jwt:Audience"], 
+                    ValidAudience = builder.Configuration["Jwt:Audience"],
                     IssuerSigningKey = new SymmetricSecurityKey(
-                        Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Key"]))
+                        Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Key"] ?? ""))
                 });
 
             var app = builder.Build();
@@ -82,6 +92,15 @@ namespace ToggleBuddy.API
 
             app.MapControllers();
 
+            try
+            {
+                DbInitializer.InitDb(app);
+            }
+            catch (Exception e)
+            {
+
+                Console.WriteLine("Error occurred while initializing database", e.Message);
+            }
             app.Run();
         }
     }

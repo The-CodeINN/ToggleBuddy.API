@@ -11,9 +11,9 @@ using ToggleBuddy.API.Data;
 
 namespace ToggleBuddy.API.Migrations
 {
-    [DbContext(typeof(ToggleBuddyAuthDbContext))]
-    [Migration("20240408115458_user database")]
-    partial class userdatabase
+    [DbContext(typeof(ToggleBuddyDbContext))]
+    [Migration("20240415075338_InitialMigration")]
+    partial class InitialMigration
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -50,22 +50,6 @@ namespace ToggleBuddy.API.Migrations
                         .HasFilter("[NormalizedName] IS NOT NULL");
 
                     b.ToTable("AspNetRoles", (string)null);
-
-                    b.HasData(
-                        new
-                        {
-                            Id = "a8a8be1b-497a-4a76-a999-155492de85ab",
-                            ConcurrencyStamp = "a8a8be1b-497a-4a76-a999-155492de85ab",
-                            Name = "Reader",
-                            NormalizedName = "READER"
-                        },
-                        new
-                        {
-                            Id = "33c995f4-1032-457f-a98b-2e2e2ef255cb",
-                            ConcurrencyStamp = "33c995f4-1032-457f-a98b-2e2e2ef255cb",
-                            Name = "Writer",
-                            NormalizedName = "WRITER"
-                        });
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
@@ -104,6 +88,11 @@ namespace ToggleBuddy.API.Migrations
                     b.Property<string>("ConcurrencyStamp")
                         .IsConcurrencyToken()
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Discriminator")
+                        .IsRequired()
+                        .HasMaxLength(13)
+                        .HasColumnType("nvarchar(13)");
 
                     b.Property<string>("Email")
                         .HasMaxLength(256)
@@ -156,6 +145,10 @@ namespace ToggleBuddy.API.Migrations
                         .HasFilter("[NormalizedUserName] IS NOT NULL");
 
                     b.ToTable("AspNetUsers", (string)null);
+
+                    b.HasDiscriminator<string>("Discriminator").HasValue("IdentityUser");
+
+                    b.UseTphMappingStrategy();
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserClaim<string>", b =>
@@ -237,6 +230,27 @@ namespace ToggleBuddy.API.Migrations
                     b.HasKey("UserId", "LoginProvider", "Name");
 
                     b.ToTable("AspNetUserTokens", (string)null);
+                });
+
+            modelBuilder.Entity("ToggleBuddy.API.Models.Domain.User", b =>
+                {
+                    b.HasBaseType("Microsoft.AspNetCore.Identity.IdentityUser");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("FirstName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("LastName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("UpdatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.HasDiscriminator().HasValue("User");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
