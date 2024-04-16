@@ -2,7 +2,7 @@
 
 namespace ToggleBuddy.API.Respositories.Interfaces
 {
-    public interface IProjectRespository
+    public interface IProjectRepository
     {
         Task<List<Project>> GetProjectsAsync();
         Task<Project> CreateProjectAsync(Project project);

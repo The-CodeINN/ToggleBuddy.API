@@ -15,11 +15,11 @@ namespace ToggleBuddy.API.Controllers
     public class ProjectController : ControllerBase
     {
         private readonly IMapper _mapper;
-        private readonly IProjectRespository _projectRepository;
+        private readonly IProjectRepository _projectRepository;
         private readonly IUser _userRepository;
         private readonly ApiResponse<object> _apiResponse = new ApiResponse<object>();
 
-        public ProjectController(IMapper mapper, IProjectRespository projectRepository, IUser userRepository)
+        public ProjectController(IMapper mapper, IProjectRepository projectRepository, IUser userRepository)
         {
             _mapper = mapper;
             _projectRepository = projectRepository;
@@ -41,7 +41,7 @@ namespace ToggleBuddy.API.Controllers
             }
 
             var project = _mapper.Map<Project>(projectRequestDto);
-            project.UserId = Guid.Parse(currentUser.Id);
+            project.User = currentUser;
 
             project = await _projectRepository.CreateProjectAsync(project);
 
@@ -67,7 +67,7 @@ namespace ToggleBuddy.API.Controllers
             }
 
             var projects = await _projectRepository.GetProjectsAsync();
-            projects = projects.Where(p => p.UserId == Guid.Parse(currentUser.Id)).ToList(); // Filter projects by current user
+            projects = currentUser.Projects;
 
             var projectResponseDto = _mapper.Map<List<ProjectResponseDto>>(projects);
 
@@ -134,8 +134,7 @@ namespace ToggleBuddy.API.Controllers
             }
 
             var updatedProject = _mapper.Map<Project>(projectRequestDto);
-            updatedProject.Id = id;
-            updatedProject.UserId = project.UserId;
+            updatedProject.Id = project.Id;
 
             var result = await _projectRepository.UpdateProjectAsync(id, updatedProject);
 

@@ -5,7 +5,7 @@ using ToggleBuddy.API.Respositories.Interfaces;
 
 namespace ToggleBuddy.API.Respositories.Implementations
 {
-    public class ProjectRepository : IProjectRespository
+    public class ProjectRepository : IProjectRepository
     {
         private readonly ToggleBuddyDbContext dbContext;
 
@@ -40,7 +40,7 @@ namespace ToggleBuddy.API.Respositories.Implementations
         public async Task<Project?> GetProjectByIdForCurrentUserAsync(Guid id, string? userId)
         {
             var project = await dbContext.Projects.FindAsync(id);
-            if (project?.UserId != Guid.Parse(userId!))
+            if (project?.UserId != userId)
                 return null; // If the project does not belong to the current user, return null
             return project;
         }

@@ -5,11 +5,11 @@ using ToggleBuddy.API.Respositories.Interfaces;
 
 namespace ToggleBuddy.API.Respositories.Implementations
 {
-    public class UserRepsitory : IUser
+    public class UserRepository : IUser
     {
         private readonly ToggleBuddyDbContext dbContext;
 
-        public UserRepsitory(ToggleBuddyDbContext dbContext)
+        public UserRepository(ToggleBuddyDbContext dbContext)
         {
             this.dbContext = dbContext;
         }
