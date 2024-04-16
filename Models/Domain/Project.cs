@@ -7,7 +7,7 @@
         public string Description { get; set; }
         public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
         public DateTime UpdatedAt { get; set; } = DateTime.UtcNow;
-        public string UserId { get; set; }
+        public Guid UserId { get; set; }
 
         // Navigation properties
         public User User { get; set; }

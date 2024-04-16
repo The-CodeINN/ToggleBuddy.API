@@ -18,7 +18,7 @@ namespace ToggleBuddy.API.Controllers
     public class FeatureController(
         IMapper mapper,
         IFeatureRepository featureRepository,
-        IProjectRespository projectRespository,
+        IProjectRepository projectRespository,
         IUser user       
         ) : ControllerBase
     {
@@ -38,10 +38,10 @@ namespace ToggleBuddy.API.Controllers
                 return NotFound();
             }
             // check if the project exists
-           // var projectId = await projectRespository.GetProjectsAsync()
+            // var projectId = await projectRespository.GetProjectsAsync()
             //check if the project belongs to the user
-
-            var project = await projectRespository.GetProjectByIdForCurrentUserAsync(projectId,  userObject.Id);
+           
+            var project = await projectRespository.GetProjectByIdForCurrentUserAsync(projectId, Guid.Parse(userObject.Id));
             if( project == null ) 
             {
                 return NotFound();

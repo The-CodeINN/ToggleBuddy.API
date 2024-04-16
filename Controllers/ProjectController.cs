@@ -6,6 +6,7 @@ using ToggleBuddy.API.Models.Domain;
 using ToggleBuddy.API.Models.DTOs.RequestDTOs;
 using ToggleBuddy.API.Models.DTOs.ResponseDTOs;
 using ToggleBuddy.API.Respositories.Interfaces;
+using ToggleBuddy.API.Models.DTOs;
 
 namespace ToggleBuddy.API.Controllers
 {
@@ -28,6 +29,7 @@ namespace ToggleBuddy.API.Controllers
 
         // POST: api/Project
         [HttpPost]
+       
         [ValidateModel]
         public async Task<IActionResult> CreateProject([FromBody] ProjectRequestDto projectRequestDto)
         {
@@ -80,6 +82,8 @@ namespace ToggleBuddy.API.Controllers
         // GET: api/Project/5
         [HttpGet]
         [Route("{id:Guid}")]
+
+
         public async Task<IActionResult> GetProjectById([FromRoute] Guid id)
         {
             var currentUser = await _userRepository.GetCurrentUserAsync(User);
@@ -91,7 +95,7 @@ namespace ToggleBuddy.API.Controllers
                 return NotFound(_apiResponse);
             }
 
-            var project = await _projectRepository.GetProjectByIdForCurrentUserAsync(id, currentUser.Id);
+            var project = await _projectRepository.GetProjectByIdForCurrentUserAsync(id, Guid.Parse(currentUser.Id));
             if (project == null)
             {
                 _apiResponse.Message = "Project not found";
@@ -124,7 +128,7 @@ namespace ToggleBuddy.API.Controllers
                 return NotFound(_apiResponse);
             }
 
-            var project = await _projectRepository.GetProjectByIdForCurrentUserAsync(id, currentUser.Id);
+            var project = await _projectRepository.GetProjectByIdForCurrentUserAsync(id, Guid.Parse(currentUser.Id));
             if (project == null)
             {
                 _apiResponse.Message = "Project not found";
@@ -160,7 +164,7 @@ namespace ToggleBuddy.API.Controllers
                 return NotFound(_apiResponse);
             }
 
-            var project = await _projectRepository.GetProjectByIdForCurrentUserAsync(id, currentUser.Id);
+            var project = await _projectRepository.GetProjectByIdForCurrentUserAsync(id, Guid.Parse(currentUser.Id));
             if (project == null)
             {
                 _apiResponse.Message = "Project not found";

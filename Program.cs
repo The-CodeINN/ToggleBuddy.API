@@ -31,8 +31,8 @@ namespace ToggleBuddy.API
 
             // adding repositories
             builder.Services.AddScoped<ITokenRepository, TokenRepository>();
-            builder.Services.AddScoped<IUser, UserRepsitory>();
-            builder.Services.AddScoped<IProjectRespository, ProjectRepository>();
+            builder.Services.AddScoped<IUser, UserRepository>();
+            builder.Services.AddScoped<IProjectRepository, ProjectRepository>();
             builder.Services.AddScoped<IFeatureRepository, FeatureRepository>();
 
             // Configure ASP.NET Core Identity services
