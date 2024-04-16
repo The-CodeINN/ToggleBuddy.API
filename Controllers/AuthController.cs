@@ -20,6 +20,7 @@ namespace ToggleBuddy.API.Controllers
         private readonly UserManager<User> userManager;
         private readonly SignInManager<User> signInManager;
         private readonly ITokenRepository tokenRepository;
+        private readonly IUser user;
         private readonly IMapper mapper;
         private readonly ApiResponse<object> apiResponse = new ApiResponse<object>();
 
@@ -27,11 +28,13 @@ namespace ToggleBuddy.API.Controllers
             UserManager<User> userManager,
             SignInManager<User> signInManager,
             ITokenRepository tokenRepository,
+            IUser user,
             IMapper mapper)
         {
             this.userManager = userManager;
             this.signInManager = signInManager;
             this.tokenRepository = tokenRepository;
+            this.user = user;
             this.mapper = mapper;
 
         }
@@ -97,5 +100,26 @@ namespace ToggleBuddy.API.Controllers
             return Ok(apiResponse);
         }
 
+        // GET: api/Auth/me
+        [HttpGet]
+        [Route("me")]
+        public async Task<IActionResult> GetCurrentUserInfo()
+        {
+            var currentUser = await user.GetCurrentUserAsync(User);
+            if (currentUser == null)
+            {
+                apiResponse.Message = "User not found";
+                apiResponse.Result = null;
+                apiResponse.Status = ResponseStatus.Error;
+                return NotFound(apiResponse);
+            }
+
+            var userResponseDto = mapper.Map<UserDto>(currentUser);
+
+            apiResponse.Result = userResponseDto;
+            apiResponse.Message = "User found";
+
+            return Ok(apiResponse);
+        }
     }
 }

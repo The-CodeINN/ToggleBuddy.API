@@ -1,7 +1,6 @@
-﻿using System.Security.Claims;
-using AutoMapper;
-using Microsoft.AspNetCore.Authorization;
+﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using AutoMapper;
 using ToggleBuddy.API.Helpers;
 using ToggleBuddy.API.Models.Domain;
 using ToggleBuddy.API.Models.DTOs.RequestDTOs;
@@ -15,16 +14,16 @@ namespace ToggleBuddy.API.Controllers
     [Authorize]
     public class ProjectController : ControllerBase
     {
-        private readonly IMapper mapper;
-        private readonly IProjectRespository projectRepository;
-        private readonly IUser userRepsitory;
-        private readonly ApiResponse<object> apiResponse = new ApiResponse<object>();
+        private readonly IMapper _mapper;
+        private readonly IProjectRepository _projectRepository;
+        private readonly IUser _userRepository;
+        private readonly ApiResponse<object> _apiResponse = new ApiResponse<object>();
 
-        public ProjectController(IMapper mapper, IProjectRespository projectRepository, IUser userRepsitory)
+        public ProjectController(IMapper mapper, IProjectRepository projectRepository, IUser userRepository)
         {
-            this.mapper = mapper;
-            this.projectRepository = projectRepository;
-            this.userRepsitory = userRepsitory;
+            _mapper = mapper;
+            _projectRepository = projectRepository;
+            _userRepository = userRepository;
         }
 
         // POST: api/Project
@@ -32,56 +31,50 @@ namespace ToggleBuddy.API.Controllers
         [ValidateModel]
         public async Task<IActionResult> CreateProject([FromBody] ProjectRequestDto projectRequestDto)
         {
-            var userId = User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier)?.Value ?? string.Empty;
-
-            var user = await userRepsitory.GetUserByIdAsync(userId);
-
-            if (user == null)
+            var currentUser = await _userRepository.GetCurrentUserAsync(User);
+            if (currentUser == null)
             {
-                apiResponse.Status = ResponseStatus.Error;
-                apiResponse.Message = "User not found";
-                return NotFound(apiResponse);
+                _apiResponse.Message = "User not found";
+                _apiResponse.Result = null;
+                _apiResponse.Status = ResponseStatus.Error;
+                return NotFound(_apiResponse);
             }
 
-            var project = mapper.Map<Project>(projectRequestDto);
-            project.UserId = Guid.Parse(userId);
+            var project = _mapper.Map<Project>(projectRequestDto);
+            project.User = currentUser;
 
-            project = await projectRepository.CreateProjectAsync(project);
+            project = await _projectRepository.CreateProjectAsync(project);
 
-            var projectResponseDto = mapper.Map<ProjectResponseDto>(project);
+            var projectResponseDto = _mapper.Map<ProjectResponseDto>(project);
 
-            apiResponse.Status = ResponseStatus.Success;
-            apiResponse.Result = projectResponseDto;
-            apiResponse.Message = "Project created successfully";
+            _apiResponse.Result = projectResponseDto;
+            _apiResponse.Message = "Project created successfully";
 
-            return CreatedAtAction(nameof(CreateProject), new { id = project.Id }, apiResponse);
-
+            return CreatedAtAction(nameof(CreateProject), new { id = project.Id }, _apiResponse);
         }
 
-        // GET List of project: api/Project
+        // GET List of projects: api/Project
         [HttpGet]
         public async Task<IActionResult> GetProjects()
         {
-            var userId = User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier)?.Value ?? string.Empty;
-
-            var user = await userRepsitory.GetUserByIdAsync(userId);
-
-            if (user == null)
+            var currentUser = await _userRepository.GetCurrentUserAsync(User);
+            if (currentUser == null)
             {
-                apiResponse.Status = ResponseStatus.Error;
-                apiResponse.Message = "User not found";
-                return NotFound(apiResponse);
+                _apiResponse.Message = "User not found";
+                _apiResponse.Result = null;
+                _apiResponse.Status = ResponseStatus.Error;
+                return NotFound(_apiResponse);
             }
 
-            var projects = await projectRepository.GetProjectsAsync();
+            var projects = await _projectRepository.GetProjectsAsync();
+            projects = currentUser.Projects;
 
-            var projectResponseDto = mapper.Map<List<ProjectResponseDto>>(projects);
+            var projectResponseDto = _mapper.Map<List<ProjectResponseDto>>(projects);
 
-            apiResponse.Status = ResponseStatus.Success;
-            apiResponse.Result = projectResponseDto;
-            apiResponse.Message = "Projects retrieved successfully";
+            _apiResponse.Result = projectResponseDto;
+            _apiResponse.Message = "Projects retrieved successfully";
 
-            return Ok(apiResponse);
+            return Ok(_apiResponse);
         }
 
         // GET: api/Project/5
@@ -89,31 +82,32 @@ namespace ToggleBuddy.API.Controllers
         [Route("{id:Guid}")]
         public async Task<IActionResult> GetProjectById([FromRoute] Guid id)
         {
-            var userId = User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier)?.Value ?? string.Empty;
-            var user = await userRepsitory.GetUserByIdAsync(userId);
-
-            if (user == null)
+            var currentUser = await _userRepository.GetCurrentUserAsync(User);
+            if (currentUser == null)
             {
-                apiResponse.Status = ResponseStatus.Error;
-                apiResponse.Message = "User not found";
-                return NotFound(apiResponse);
+                _apiResponse.Message = "User not found";
+                _apiResponse.Result = null;
+                _apiResponse.Status = ResponseStatus.Error;
+                return NotFound(_apiResponse);
             }
 
-            var project = await projectRepository.GetProjectByIdAsync(id);
+            var project = await _projectRepository.GetProjectByIdForCurrentUserAsync(id, currentUser.Id);
             if (project == null)
             {
-                 apiResponse.Status = ResponseStatus.Error;
-                apiResponse.Message = "Project not found";
-                return NotFound(apiResponse);
+                _apiResponse.Message = "Project not found";
+                _apiResponse.Result = null;
+                _apiResponse.Status = ResponseStatus.Error;
+                return NotFound(_apiResponse);
             }
 
-            var projectResponseDto = mapper.Map<ProjectResponseDto>(project);
-            apiResponse.Status = ResponseStatus.Success;
-            apiResponse.Result = projectResponseDto;
-            apiResponse.Message = "Project retrieved successfully";
-            
-            return Ok(apiResponse);
+            var projectResponseDto = _mapper.Map<ProjectResponseDto>(project);
+
+            _apiResponse.Result = projectResponseDto;
+            _apiResponse.Message = "Project retrieved successfully";
+
+            return Ok(_apiResponse);
         }
+
 
         // PUT: api/Project/5
         [HttpPut]
@@ -121,44 +115,35 @@ namespace ToggleBuddy.API.Controllers
         [ValidateModel]
         public async Task<IActionResult> UpdateProjectById([FromRoute] Guid id, [FromBody] ProjectRequestDto projectRequestDto)
         {
-            var userId = User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier)?.Value ?? string.Empty;
-            var user = await userRepsitory.GetUserByIdAsync(userId);
-
-            if (user == null)
+            var currentUser = await _userRepository.GetCurrentUserAsync(User);
+            if (currentUser == null)
             {
-                apiResponse.Status = ResponseStatus.Error;
-                apiResponse.Message = "User not found";
-                return NotFound(apiResponse);
+                _apiResponse.Message = "User not found";
+                _apiResponse.Result = null;
+                _apiResponse.Status = ResponseStatus.Error;
+                return NotFound(_apiResponse);
             }
 
-            var project = await projectRepository.GetProjectByIdAsync(id);
+            var project = await _projectRepository.GetProjectByIdForCurrentUserAsync(id, currentUser.Id);
             if (project == null)
             {
-                apiResponse.Status = ResponseStatus.Error;
-                apiResponse.Message = "Project not found";
-                return NotFound(apiResponse);
+                _apiResponse.Message = "Project not found";
+                _apiResponse.Result = null;
+                _apiResponse.Status = ResponseStatus.Error;
+                return NotFound(_apiResponse);
             }
 
-            var updatedProject = mapper.Map<Project>(projectRequestDto);
-            updatedProject.Id = id;
-            updatedProject.UserId = Guid.Parse(userId);
+            var updatedProject = _mapper.Map<Project>(projectRequestDto);
+            updatedProject.Id = project.Id;
 
-            var result = await projectRepository.UpdateProjectAsync(id, updatedProject);
+            var result = await _projectRepository.UpdateProjectAsync(id, updatedProject);
 
-            if (result == null)
-            {
-                apiResponse.Status = ResponseStatus.Error;
-                apiResponse.Message = "Project not found";
-                return NotFound(apiResponse);
-            }
+            var projectResponseDto = _mapper.Map<ProjectResponseDto>(result);
 
-            var projectResponseDto = mapper.Map<ProjectResponseDto>(result);
+            _apiResponse.Result = projectResponseDto;
+            _apiResponse.Message = "Project updated successfully";
 
-            apiResponse.Status = ResponseStatus.Success;
-            apiResponse.Result = projectResponseDto;
-            apiResponse.Message = "Project updated successfully";
-
-            return Ok(apiResponse);
+            return Ok(_apiResponse);
         }
 
         // DELETE: api/Project/5
@@ -166,42 +151,33 @@ namespace ToggleBuddy.API.Controllers
         [Route("{id:Guid}")]
         public async Task<IActionResult> DeleteProjectById([FromRoute] Guid id)
         {
-            var userId = User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier)?.Value ?? string.Empty;
-            var user = await userRepsitory.GetUserByIdAsync(userId);
-
-            if (user == null)
+            var currentUser = await _userRepository.GetCurrentUserAsync(User);
+            if (currentUser == null)
             {
-                apiResponse.Status = ResponseStatus.Error;
-                apiResponse.Message = "User not found";
-                return NotFound(apiResponse);
+                _apiResponse.Message = "User not found";
+                _apiResponse.Result = null;
+                _apiResponse.Status = ResponseStatus.Error;
+                return NotFound(_apiResponse);
             }
 
-            var project = await projectRepository.GetProjectByIdAsync(id);
+            var project = await _projectRepository.GetProjectByIdForCurrentUserAsync(id, currentUser.Id);
             if (project == null)
             {
-                apiResponse.Status = ResponseStatus.Error;
-                apiResponse.Message = "Project not found";
-                return NotFound(apiResponse);
+                _apiResponse.Message = "Project not found";
+                _apiResponse.Result = null;
+                _apiResponse.Status = ResponseStatus.Error;
+                return NotFound(_apiResponse);
             }
 
-            var result = await projectRepository.DeleteProjectAsync(id);
+            var result = await _projectRepository.DeleteProjectAsync(id);
 
-            if (result == null)
-            {
-                apiResponse.Status = ResponseStatus.Error;
-                apiResponse.Message = "Project not found";
-                return NotFound(apiResponse);
-            }
+            var projectResponseDto = _mapper.Map<ProjectResponseDto>(result);
 
-            var projectResponseDto = mapper.Map<ProjectResponseDto>(result);
+            _apiResponse.Result = projectResponseDto;
+            _apiResponse.Message = "Project deleted successfully";
 
-            apiResponse.Status = ResponseStatus.Success;
-            apiResponse.Result = projectResponseDto;
-            apiResponse.Message = "Project deleted successfully";
-
-            return Ok(apiResponse);
+            return Ok(_apiResponse);
         }
+
     }
-
 }
-
