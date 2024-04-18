@@ -19,8 +19,8 @@ namespace ToggleBuddy.API.Controllers
         IMapper mapper,
         IFeatureRepository featureRepository,
         IProjectRepository projectRespository,
-        IUser user,
-        ApiResponse<string> _apiResponse
+        IUser user
+        //ApiResponse<string> _apiResponse
 
         ) : ControllerBase
     {
@@ -133,7 +133,7 @@ namespace ToggleBuddy.API.Controllers
             if(UpdateFeature == null) 
             
                 return NotFound();
-            return ApiResponse((mapper.Map<UpdateFeatureResponseDto>(featureModel)), "Feature updated successfully", ResponseStatus.Success);
+            return ApiResponse((mapper.Map<FeatureResponseDto>(featureModel)), "Feature updated successfully", ResponseStatus.Success);
         }
 
         [HttpDelete]
