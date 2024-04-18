@@ -10,7 +10,7 @@
         public string UserId { get; set; }
 
         // Navigation properties
-        public User User { get; set; }
+        // public User User { get; set; }
 
     }
 }
