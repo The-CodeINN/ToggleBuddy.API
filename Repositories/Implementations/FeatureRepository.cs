@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Http.HttpResults;
+﻿using AutoMapper.Features;
+using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.EntityFrameworkCore;
 using ToggleBuddy.API.Data;
 using ToggleBuddy.API.Models.Domain;
@@ -46,9 +47,22 @@ namespace ToggleBuddy.API.Respositories.Implementations
             return feature;
         }
 
-        public Task<Feature> UpdateAsync(Project project, Guid id)
+        public async Task<Feature> UpdateAsync(Project project, Guid id, Feature feature)
         {
-            throw new NotImplementedException();
+            var updateFeature = await dbContext.Features.FirstOrDefaultAsync(x => x.Id == id && x.Project.Id == project.Id);
+            if(updateFeature == null) 
+
+                return null;
+
+            updateFeature.Name = feature.Name;
+            updateFeature.Description = feature.Description;
+            updateFeature.ExpirationDate = feature.ExpirationDate;
+            
+            await dbContext.SaveChangesAsync();
+            return updateFeature;
+
+            
+
         }
     }
 }

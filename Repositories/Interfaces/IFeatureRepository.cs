@@ -9,7 +9,7 @@ namespace ToggleBuddy.API.Respositories.Interfaces
 
         public Task<Feature> ShowAsync(Project project, Guid id);
 
-        public Task<Feature> UpdateAsync(Project project, Guid id);
+        public Task<Feature> UpdateAsync(Project project, Guid id, Feature feature);
 
         public Task<ICollection<Feature>> GetAllAsync(Project projet);
 
