@@ -19,10 +19,20 @@ namespace ToggleBuddy.API.Controllers
         IMapper mapper,
         IFeatureRepository featureRepository,
         IProjectRepository projectRespository,
-        IUser user
+        IUser user,
+        ApiResponse<string> _apiResponse
 
         ) : ControllerBase
     {
+        private readonly ApiResponse<object> _apiResponse = new ApiResponse<object>();
+        private IActionResult ApiResponse(object result, string message, ResponseStatus status)
+        {
+            _apiResponse.Result = result;
+            _apiResponse.Message = message;
+            _apiResponse.Status = status;
+
+            return Ok(_apiResponse);
+        }
         [HttpPost]
         [Authorize]
         [ValidateModel]
@@ -31,18 +41,20 @@ namespace ToggleBuddy.API.Controllers
             [FromRoute] Guid projectId,
             [FromBody] FeatureRequestDto FeatureRequestDto
             )
+
+
         {
             //check if the user is authenticated
             var userObject = await user.GetCurrentUserAsync(User);
             if (userObject == null)
             {
-                return NotFound();
+                return NotFound("User not found");
             }
             //check if the project belongs to the user
             var project = await projectRespository.GetProjectByIdForCurrentUserAsync(projectId, userObject.Id);
             if (project == null)
             {
-                return NotFound();
+                return BadRequest("The project does not belong to the user");
             }
             // Create a new instance of the model from the Dto
             var FeatureModel = new Feature
@@ -54,7 +66,7 @@ namespace ToggleBuddy.API.Controllers
             };
             // Save the model using the repository class
             await featureRepository.CreateAsync(FeatureModel);
-            return Ok((mapper.Map<FeatureResponseDto>(FeatureModel)));
+            return ApiResponse((mapper.Map<FeatureResponseDto>(FeatureModel)), "Feature created successfully", ResponseStatus.Success);
         }
 
         [HttpGet]
@@ -67,22 +79,22 @@ namespace ToggleBuddy.API.Controllers
             var userObject = await user.GetCurrentUserAsync(User);
             if (userObject == null)
             {
-                return NotFound();
+                 return NotFound("User not found");
             }
 
             //check if the project belongs to the user
             var projectUser = await projectRespository.GetProjectByIdForCurrentUserAsync(projectId, userObject.Id);
             if (projectUser == null)
             {
-                return NotFound();
+                return BadRequest("The project does not belong to the user");
             }
             var showFeature = await featureRepository.ShowAsync(projectUser, id);
 
             // check if the feature belongs to the project
 
             if(showFeature == null)
-                return NotFound();
-            return Ok((mapper.Map<FeatureResponseDto>(showFeature)));
+                return BadRequest("feature not found");
+            return ApiResponse((mapper.Map<FeatureResponseDto>(showFeature)), "Feature retrieved by Id", ResponseStatus.Success);
         }
 
         [HttpPut]
@@ -96,14 +108,14 @@ namespace ToggleBuddy.API.Controllers
             var userObject = await user.GetCurrentUserAsync(User);
             if (userObject == null)
             {
-                return NotFound();
+                 return NotFound("User not found");
             }
 
             //check if the project belongs to the user
             var projectUser = await projectRespository.GetProjectByIdForCurrentUserAsync(projectId, userObject.Id);
             if (projectUser == null)
             {
-                return NotFound();
+               return BadRequest("The project does not belong to the user");
             }
 
             // Create a new instance of the model from the Dto
@@ -121,7 +133,7 @@ namespace ToggleBuddy.API.Controllers
             if(UpdateFeature == null) 
             
                 return NotFound();
-            return Ok((mapper.Map<UpdateFeatureResponseDto>(featureModel)));
+            return ApiResponse((mapper.Map<UpdateFeatureResponseDto>(featureModel)), "Feature updated successfully", ResponseStatus.Success);
         }
 
         [HttpDelete]
@@ -135,25 +147,23 @@ namespace ToggleBuddy.API.Controllers
             var userObject = await user.GetCurrentUserAsync(User);
             if (userObject == null)
             {   
-                return NotFound();
+                return NotFound("User not found");
             }
 
             //check if the project belongs to the user
             var project = await projectRespository.GetProjectByIdForCurrentUserAsync(projectId, userObject.Id);
             if (project == null)
             {
-                return NotFound();
+                return NotFound("Project not found");
             }
             var feature = await featureRepository.DeleteAsync(project, id);
 
             // check if the feature belongs to the project
 
-            if(feature == null)
-            {   
-                return NotFound();
-            }
+            if(feature == null) 
+            return BadRequest("feature not found");
+            return ApiResponse((mapper.Map<FeatureResponseDto>(feature)), "Feature deleted successfully", ResponseStatus.Success);
 
-            return Ok("delected successfully");
-        } 
+        }
     }
 }
