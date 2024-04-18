@@ -95,7 +95,7 @@ namespace ToggleBuddy.API.Controllers
                 return NotFound(_apiResponse);
             }
 
-            var project = await _projectRepository.GetProjectByIdForCurrentUserAsync(id, Guid.Parse(currentUser.Id));
+            var project = await _projectRepository.GetProjectByIdForCurrentUserAsync(id, (currentUser.Id));
             if (project == null)
             {
                 _apiResponse.Message = "Project not found";
@@ -128,7 +128,7 @@ namespace ToggleBuddy.API.Controllers
                 return NotFound(_apiResponse);
             }
 
-            var project = await _projectRepository.GetProjectByIdForCurrentUserAsync(id, Guid.Parse(currentUser.Id));
+            var project = await _projectRepository.GetProjectByIdForCurrentUserAsync(id, (currentUser.Id));
             if (project == null)
             {
                 _apiResponse.Message = "Project not found";
@@ -164,7 +164,7 @@ namespace ToggleBuddy.API.Controllers
                 return NotFound(_apiResponse);
             }
 
-            var project = await _projectRepository.GetProjectByIdForCurrentUserAsync(id, Guid.Parse(currentUser.Id));
+            var project = await _projectRepository.GetProjectByIdForCurrentUserAsync(id, (currentUser.Id));
             if (project == null)
             {
                 _apiResponse.Message = "Project not found";

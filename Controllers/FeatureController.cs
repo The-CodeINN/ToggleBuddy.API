@@ -40,8 +40,8 @@ namespace ToggleBuddy.API.Controllers
             // check if the project exists
             // var projectId = await projectRespository.GetProjectsAsync()
             //check if the project belongs to the user
-           
-            var project = await projectRespository.GetProjectByIdForCurrentUserAsync(projectId, Guid.Parse(userObject.Id));
+            // await Console.Out.WriteLineAsync(userObject.Id);
+            var project = await projectRespository.GetProjectByIdForCurrentUserAsync(projectId, userObject.Id);
             if( project == null ) 
             {
                 return NotFound();

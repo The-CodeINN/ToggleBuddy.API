@@ -39,11 +39,11 @@ namespace ToggleBuddy.API.Respositories.Implementations
 
        
 
-        public async Task<Project?> GetProjectByIdForCurrentUserAsync(Guid id, Guid userId)
+        public async Task<Project?> GetProjectByIdForCurrentUserAsync(Guid id, string? userId)
         {
            // await Console.Out.WriteLineAsync(userId);
             var project = await dbContext.Projects.FirstOrDefaultAsync(p=>p.Id==id);
-            if (project?.UserId != userId)
+            if (project?.User.Id != userId)
                 return null; // If the project does not belong to the current user, return null
             return project;
         }
