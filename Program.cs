@@ -9,7 +9,8 @@ using ToggleBuddy.API.Mappings;
 using ToggleBuddy.API.Models.Domain;
 using ToggleBuddy.API.Respositories.Implementations;
 using ToggleBuddy.API.Respositories.Interfaces;
-using ToggleBuddy.API.Services;
+using ToggleBuddy.API.Services.AuthServices;
+using ToggleBuddy.API.Services.ProjectServices;
 
 namespace ToggleBuddy.API
 {
@@ -37,6 +38,7 @@ namespace ToggleBuddy.API
 
             // adding services
             builder.Services.AddScoped<IProjectService, ProjectService>();
+            builder.Services.AddScoped<IAuthService, AuthService>();
 
             // Configure ASP.NET Core Identity services
             builder.Services.AddIdentity<User, IdentityRole>()
