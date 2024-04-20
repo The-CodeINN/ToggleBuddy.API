@@ -1,13 +1,19 @@
-﻿using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Mvc;
+﻿using System;
 using AutoMapper;
+using System.Collections.Generic;
+using System.Linq;
+using System.Security.Claims;
+using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
 using ToggleBuddy.API.Helpers;
 using ToggleBuddy.API.Models.Domain;
 using ToggleBuddy.API.Models.DTOs.RequestDTOs;
 using ToggleBuddy.API.Models.DTOs.ResponseDTOs;
-using ToggleBuddy.API.Respositories.Interfaces;
-using ToggleBuddy.API.Models.DTOs;
-
+using ToggleBuddy.API.Repositories.Interfaces; // Add this using directive
+using ToggleBuddy.API.Services.Interfaces;
 namespace ToggleBuddy.API.Controllers
 {
     [Route("api/[controller]")]

@@ -1,6 +1,6 @@
 ﻿using ToggleBuddy.API.Models.Domain;
 
-namespace ToggleBuddy.API.Respositories.Interfaces
+namespace ToggleBuddy.API.Repositories.Interfaces
 {
     public interface IProjectRepository
     {

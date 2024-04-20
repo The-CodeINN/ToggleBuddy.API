@@ -6,8 +6,8 @@ using ToggleBuddy.API.Helpers;
 using ToggleBuddy.API.Models.Domain;
 using ToggleBuddy.API.Models.DTOs.RequestDTOs;
 using ToggleBuddy.API.Models.DTOs.ResponseDTOs;
-using ToggleBuddy.API.Respositories.Implementations;
-using ToggleBuddy.API.Respositories.Interfaces;
+using ToggleBuddy.API.Repositories.Implementations;
+using ToggleBuddy.API.Repositories.Interfaces;
 
 namespace ToggleBuddy.API.Controllers
 {
