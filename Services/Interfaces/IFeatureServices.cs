@@ -10,7 +10,7 @@ namespace ToggleBuddy.API.Services.Interfaces
 {
     public interface IFeatureServices
     {
-        Task<ApiResponse<FeatureResponseDto>> CreateFeatureAsync(Project project,ClaimsPrincipal userId, FeatureRequestDto featureRequestDto);
+        Task<ApiResponse<FeatureResponseDto>> CreateFeatureAsync(Project project, ClaimsPrincipal userId, FeatureRequestDto featureRequestDto);
 
         Task<ApiResponse<FeatureResponseDto>> ShowFeatureAsync(Project project, Guid id,ClaimsPrincipal userId);
 

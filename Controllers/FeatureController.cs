@@ -28,10 +28,10 @@ namespace ToggleBuddy.API.Controllers
 
         [HttpPost]
         [Authorize]
-        public async Task<IActionResult> Create([FromRoute] Guid ProjectId ,[FromBody] FeatureRequestDto featureRequestDto)
+        public async Task<IActionResult> Create([FromRoute] Guid projectId ,[FromBody] FeatureRequestDto featureRequestDto)
         {
           // Fetch project using projectId and user from the repository
-            var project = await _projectRepository.GetProjectByIdForCurrentUserAsync(ProjectId, User?.FindFirstValue(ClaimTypes.NameIdentifier));
+            var project = await _projectRepository.GetProjectByIdForCurrentUserAsync(projectId, User?.FindFirstValue(ClaimTypes.NameIdentifier));
 
             // Check if project was found and belongs to the current user
             if (project == null)
@@ -51,38 +51,82 @@ namespace ToggleBuddy.API.Controllers
             return Ok(response);
 
         }
+          [HttpGet]
+          [Route("{id:Guid}")]
+          [Authorize]
+          public async Task<IActionResult> Show([FromRoute] Guid projectId, [FromRoute] Guid id)
+          {
+            // Retrieve the project using the provided projectId and current user
+            var project = await _projectRepository.GetProjectByIdForCurrentUserAsync(projectId, User.FindFirst(ClaimTypes.NameIdentifier)?.Value);
+            // Check if the project exists and belongs to the current user
+            if (project == null)
+            {
+                return NotFound("Project not found or not accessible to the current user.");
+            }
+            // Call the service method to show the feature
+            var response = await _featureServices.ShowFeatureAsync(project, id, User);
 
-        // [HttpGet("{id:Guid}")]
-        // [Authorize]
-        // public async Task<IActionResult> Show([FromRoute] Guid id)
-        // {
-           
-        //     var ShowFeature = await _featureServices.ShowFeatureAsync(project, id, User);
-        //     if(ShowFeature == null)
-        //     return BadRequest("");
-        //     return Ok(ShowFeature);
-            
-        // }
+            // Check the response status and return appropriate result
+            if (response.Status == ResponseStatus.NotFound)
+            {
+                return NotFound(response.Message);
+            }
 
-        // [HttpPut("{id:Guid}")]
-        // [Authorize]
-        // public async Task<IActionResult> Update([FromRoute] Guid id, [FromBody] UpdateFeatureRequestDto updateFeatureRequestDto)
-        // {
-        //     var updateFeature = await _featureServices.UpdateFeatureAsync(project,id,updateFeatureRequestDto,User);
-        //     if(updateFeature == null)
-        //     return BadRequest("");
-        //     return Ok(updateFeature);
-           
-        // }
+            return Ok(response);
 
-        // [HttpDelete("{id:Guid}")]
-        // [Authorize]
-        // public async Task<IActionResult> Delete([FromRoute] Guid id)
-        // {
-        //     var deleteFeature = await _featureServices.DeleteFeature(project,id, User);
-        //     if(deleteFeature == null)return BadRequest("");
-        //     return Ok(deleteFeature);
-            
-        // }
+          }
+         [HttpPut]
+         [Route("{id:Guid}")]
+         [Authorize]
+         public async Task<IActionResult> Update([FromRoute] Guid projectId,[FromRoute] Guid id, [FromBody] UpdateFeatureRequestDto updateFeatureRequestDto)
+         {
+            // Retrieve the project using the provided projectId and current user
+            var project = await _projectRepository.GetProjectByIdForCurrentUserAsync(projectId, User.FindFirst(ClaimTypes.NameIdentifier)?.Value);
+
+            // Check if the project exists and belongs to the current user
+            if (project == null)
+            {
+                return NotFound("Project not found or not accessible to the current user.");
+            }
+
+            // Call the service method to update the feature
+            var response = await _featureServices.UpdateFeatureAsync(project, id, updateFeatureRequestDto, User);
+
+            // Check the response status and return appropriate result
+            if (response.Status == ResponseStatus.NotFound)
+            {
+                return NotFound(response.Message);
+            }
+
+            return Ok(response);
+
+         }
+     
+          [HttpDelete]
+          [Route("{id:Guid}")]
+          [Authorize]
+         public async Task<IActionResult> Delete([FromRoute] Guid projectId,[FromRoute] Guid id)
+         {
+            // Retrieve the project using the provided projectId and current user
+            var project = await _projectRepository.GetProjectByIdForCurrentUserAsync(projectId, User.FindFirst(ClaimTypes.NameIdentifier)?.Value);
+
+            // Check if the project exists and belongs to the current user
+            if (project == null)
+            {
+                return NotFound("Project not found or not accessible to the current user.");
+            }
+
+            // Call the service method to delete the feature
+            var response = await _featureServices.DeleteFeature(project, id, User);
+
+            // Check the response status and return appropriate result
+            if (response.Status == ResponseStatus.NotFound)
+            {
+                return NotFound(response.Message);
+            }
+
+            return Ok(response);
+
+         }
     }
 }

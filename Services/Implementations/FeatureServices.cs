@@ -46,7 +46,7 @@ namespace ToggleBuddy.API.Services.Implementations
                     Name = featureRequestDto.Name,
                     Description = featureRequestDto.Description,
                     ExpirationDate = featureRequestDto.ExpirationDate,
-                    //ProjectId = ;
+                    ProjectId =project.Id
                 };
 
                 await _featureRepository.CreateAsync(featureModel);
@@ -60,10 +60,10 @@ namespace ToggleBuddy.API.Services.Implementations
             var userObject = await _user.GetCurrentUserAsync(userId);
                if (userObject == null) return new ApiResponse<FeatureResponseDto> { Message = "User not found", Status = ResponseStatus.NotFound };
 
-                 var projects = await _projectRepository.GetProjectByIdForCurrentUserAsync(id, userObject.Id);
+                 var projects = await _projectRepository.GetProjectByIdForCurrentUserAsync(project.Id, userObject.Id);
                 if (projects == null)
 
-                  return new ApiResponse<FeatureResponseDto> { Message = "Project", Status = ResponseStatus.NotFound };
+                  return new ApiResponse<FeatureResponseDto> { Message = "Project was found", Status = ResponseStatus.NotFound };
                    var feature = await _featureRepository.DeleteAsync(project, id);
 
                 if (feature == null)
@@ -77,11 +77,11 @@ namespace ToggleBuddy.API.Services.Implementations
              var userObject = await _user.GetCurrentUserAsync(userId);
                if (userObject == null) return new ApiResponse<FeatureResponseDto> { Message = "User not found", Status = ResponseStatus.NotFound };
 
-                 var projects = await _projectRepository.GetProjectByIdForCurrentUserAsync(id, userObject.Id);
+                 var projects = await _projectRepository.GetProjectByIdForCurrentUserAsync(project.Id, userObject.Id);
                 if (projects == null)
 
                   return new ApiResponse<FeatureResponseDto> { Message = "Project", Status = ResponseStatus.NotFound };
-                   var feature = await _featureRepository.DeleteAsync(project, id);
+                   var feature = await _featureRepository.ShowAsync(project, id);
 
                 if (feature == null)
                    return new ApiResponse<FeatureResponseDto> { Message = "Feature", Status = ResponseStatus.NotFound };
