@@ -33,7 +33,7 @@ namespace ToggleBuddy.API.Repositories.Implementations
                 _configuration["Jwt:Issuer"],
                 _configuration["Jwt:Audience"],
                 claims,
-                expires: expires,
+                expires: DateTime.UtcNow.AddMinutes(30),
                 signingCredentials: credentials
             );
 

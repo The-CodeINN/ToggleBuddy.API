@@ -45,7 +45,7 @@ namespace ToggleBuddy.API.Controllers
         [HttpGet("{id:Guid}")]
         public async Task<IActionResult> GetProjectById(Guid id)
         {
-            var response = await _projectService.GetProjectByIdForCurrentUserAsync(id, User);
+            var response = await _projectService.GetProjectByIdAsync(id, User);
             return HandleApiResponse(response);
         }
 

@@ -1,4 +1,7 @@
-﻿using System.Security.Claims;
+﻿using System;
+using System.Collections.Generic;
+using System.Security.Claims;
+using System.Threading.Tasks;
 using AutoMapper;
 using ToggleBuddy.API.Helpers;
 using ToggleBuddy.API.Models.Domain;
@@ -12,78 +15,68 @@ namespace ToggleBuddy.API.Services.ProjectServices
     {
         private readonly IMapper _mapper;
         private readonly IProjectRepository _projectRepository;
-        private readonly IUser _userRepository;
-        public ProjectService(IMapper mapper, IProjectRepository projectRepository, IUser userRepository)
+
+        public ProjectService(IMapper mapper, IProjectRepository projectRepository)
         {
             _mapper = mapper;
             _projectRepository = projectRepository;
-            _userRepository = userRepository;
         }
 
-        public async Task<ApiResponse<ProjectResponseDto>> CreateProjectAsync(ProjectRequestDto projectRequestDto, ClaimsPrincipal userId)
+        public async Task<ApiResponse<ProjectResponseDto>> CreateProjectAsync(ProjectRequestDto projectRequestDto, ClaimsPrincipal claimsPrincipal)
         {
-            var currentUser = await _userRepository.GetCurrentUserAsync(userId);
-            if (currentUser == null) return new ApiResponse<ProjectResponseDto> { Message = "User not found", Status = ResponseStatus.NotFound };
-
+            var currentUserId = claimsPrincipal.GetLoggedInUserId();
             var project = _mapper.Map<Project>(projectRequestDto);
-            project.UserId = currentUser.Id;
+            project.UserId = currentUserId;
 
             var createdProject = await _projectRepository.CreateProjectAsync(project);
-            if (createdProject == null) return new ApiResponse<ProjectResponseDto> { Message = "Project creation failed", Status = ResponseStatus.BadRequest };
-
             var projectResponseDto = _mapper.Map<ProjectResponseDto>(createdProject);
 
             return new ApiResponse<ProjectResponseDto> { Result = projectResponseDto, Message = "Project created successfully", Status = ResponseStatus.Success };
         }
 
-        public async Task<ApiResponse<ProjectResponseDto>> DeleteProjectAsync(Guid id, ClaimsPrincipal userId)
+        public async Task<ApiResponse<ProjectResponseDto>> DeleteProjectAsync(Guid id, ClaimsPrincipal claimsPrincipal)
         {
-            var currentUser = await _userRepository.GetCurrentUserAsync(userId);
-            if (currentUser == null) return new ApiResponse<ProjectResponseDto> { Message = "User not found", Status = ResponseStatus.NotFound };
+            var currentUserId = claimsPrincipal.GetLoggedInUserId();
 
-            var deletedProject = await _projectRepository.DeleteProjectAsync(id);
-            if (deletedProject == null) return new ApiResponse<ProjectResponseDto> { Message = "Project not found", Status = ResponseStatus.NotFound };
+            var deletedProject = await _projectRepository.DeleteProjectAsync(id, currentUserId);
+            if (deletedProject == null)
+                return new ApiResponse<ProjectResponseDto> { Message = "Project not found or you are not authorized to delete it", Status = ResponseStatus.NotFound };
 
             var projectResponseDto = _mapper.Map<ProjectResponseDto>(deletedProject);
-
             return new ApiResponse<ProjectResponseDto> { Result = projectResponseDto, Message = "Project deleted successfully", Status = ResponseStatus.Success };
         }
 
-        public async Task<ApiResponse<ProjectResponseDto>> GetProjectByIdForCurrentUserAsync(Guid id, ClaimsPrincipal userId)
+        public async Task<ApiResponse<ProjectResponseDto>> GetProjectByIdAsync(Guid id, ClaimsPrincipal claimsPrincipal)
         {
-            var currentUser = await _userRepository.GetCurrentUserAsync(userId);
-            if (currentUser == null) return new ApiResponse<ProjectResponseDto> { Message = "User not found", Status = ResponseStatus.NotFound };
+            var currentUserId = claimsPrincipal.GetLoggedInUserId();
 
-            var project = await _projectRepository.GetProjectByIdForCurrentUserAsync(id, currentUser.Id);
-            if (project == null) return new ApiResponse<ProjectResponseDto> { Message = "Project not found", Status = ResponseStatus.NotFound };
+            var project = await _projectRepository.GetProjectByIdAsync(id, currentUserId);
+            if (project == null)
+                return new ApiResponse<ProjectResponseDto> { Message = "Project not found or you are not authorized to access it", Status = ResponseStatus.NotFound };
 
             var projectResponseDto = _mapper.Map<ProjectResponseDto>(project);
-
             return new ApiResponse<ProjectResponseDto> { Result = projectResponseDto, Message = "Project retrieved successfully", Status = ResponseStatus.Success };
         }
 
-        public async Task<ApiResponse<List<ProjectResponseDto>>> GetProjectsAsync(ClaimsPrincipal userId)
+        public async Task<ApiResponse<List<ProjectResponseDto>>> GetProjectsAsync(ClaimsPrincipal claimsPrincipal)
         {
-            var currentUser = await _userRepository.GetCurrentUserAsync(userId);
-            if (currentUser == null) return new ApiResponse<List<ProjectResponseDto>> { Message = "User not found", Status = ResponseStatus.NotFound };
+            var currentUserId = claimsPrincipal.GetLoggedInUserId();
 
-            var projects = await _projectRepository.GetProjectsAsync();
+            var projects = await _projectRepository.GetProjectsAsync(currentUserId);
             var projectResponseDtos = _mapper.Map<List<ProjectResponseDto>>(projects);
 
             return new ApiResponse<List<ProjectResponseDto>> { Result = projectResponseDtos, Message = "Projects retrieved successfully", Status = ResponseStatus.Success };
         }
 
-        public async Task<ApiResponse<ProjectResponseDto>> UpdateProjectAsync(Guid id, ProjectRequestDto projectRequestDto, ClaimsPrincipal userId)
+        public async Task<ApiResponse<ProjectResponseDto>> UpdateProjectAsync(Guid id, ProjectRequestDto projectRequestDto, ClaimsPrincipal claimsPrincipal)
         {
-            var currentUser = await _userRepository.GetCurrentUserAsync(userId);
-            if (currentUser == null) return new ApiResponse<ProjectResponseDto> { Message = "User not found", Status = ResponseStatus.NotFound };
+            var currentUserId = claimsPrincipal.GetLoggedInUserId();
 
-            var project = _mapper.Map<Project>(projectRequestDto);
-            var updatedProject = await _projectRepository.UpdateProjectAsync(id, project);
-            if (updatedProject == null) return new ApiResponse<ProjectResponseDto> { Message = "Project not found", Status = ResponseStatus.NotFound };
+            var result = await _projectRepository.UpdateProjectAsync(id, _mapper.Map<Project>(projectRequestDto), currentUserId);
+            if (result == null)
+                return new ApiResponse<ProjectResponseDto> { Message = "Project not found or you are not authorized to update it", Status = ResponseStatus.NotFound };
 
-            var projectResponseDto = _mapper.Map<ProjectResponseDto>(updatedProject);
-
+            var projectResponseDto = _mapper.Map<ProjectResponseDto>(result);
             return new ApiResponse<ProjectResponseDto> { Result = projectResponseDto, Message = "Project updated successfully", Status = ResponseStatus.Success };
         }
     }
