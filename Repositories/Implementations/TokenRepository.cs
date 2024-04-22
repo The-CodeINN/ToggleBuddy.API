@@ -4,9 +4,9 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
 using ToggleBuddy.API.Models.Domain;
-using ToggleBuddy.API.Respositories.Interfaces;
+using ToggleBuddy.API.Repositories.Interfaces;
 
-namespace ToggleBuddy.API.Respositories.Implementations
+namespace ToggleBuddy.API.Repositories.Implementations
 {
     public class TokenRepository : ITokenRepository
     {

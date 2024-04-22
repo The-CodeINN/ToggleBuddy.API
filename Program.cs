@@ -7,8 +7,8 @@ using System.Text;
 using ToggleBuddy.API.Data;
 using ToggleBuddy.API.Mappings;
 using ToggleBuddy.API.Models.Domain;
-using ToggleBuddy.API.Respositories.Implementations;
-using ToggleBuddy.API.Respositories.Interfaces;
+using ToggleBuddy.API.Repositories.Implementations;
+using ToggleBuddy.API.Repositories.Interfaces;
 using ToggleBuddy.API.Services.AuthServices;
 using ToggleBuddy.API.Services.ProjectServices;
 
