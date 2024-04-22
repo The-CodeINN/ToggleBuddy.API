@@ -1,87 +1,13 @@
-﻿// using AutoMapper;
-// using Microsoft.AspNetCore.Authorization;
-// using Microsoft.AspNetCore.Http;
-// using Microsoft.AspNetCore.Mvc;
-// using Microsoft.EntityFrameworkCore;
-// using ToggleBuddy.API.Services.Interfaces;
-// using ToggleBuddy.API.Helpers;
-// using ToggleBuddy.API.Models.Domain;
-// using ToggleBuddy.API.Models.DTOs.RequestDTOs;
-// using ToggleBuddy.API.Models.DTOs.ResponseDTOs;
-// using ToggleBuddy.API.Repositories.Interfaces;
-
-
-// namespace ToggleBuddy.API.Controllers
-// {
-//     [Route("api/{projectId:Guid}/Feature")]
-//     [ApiController]
-//     public class FeatureController(
-//         IFeatureServices featureServices,
-//          IUser user
-//         ) : ControllerBase
-//     {    
-//         [HttpPost]
-//         [Authorize]
-//         //[ValidateModel]
-//         public async Task<IActionResult> Create(
-//             [FromRoute] Guid projectId,
-//             [FromBody] FeatureRequestDto featureRequestDto)
-//         {
-//             //call the service layer method to create the feature
-//             var FeatureCreated = await featureServices.CreateFeatureAsync(projectId, featureRequestDto);
-//             if(FeatureCreated == null)
-//                   return BadRequest("Feature creation failed"); 
-//             return Ok();     
-//         }
-//         [HttpGet]
-//         [Authorize]
-//        // [ValidateModel]
-//         [Route("{id:Guid}")]
-//         public async Task<IActionResult> Show([FromRoute] Guid id, [FromRoute] Guid projectId )
-//         {
-//              //call the service layer method to show feature by ID
-//              var ShowFeature = await featureServices.ShowFeatureAsync(project, id);
-//              // if project does not exist or feature doesnt belong to the project/user
-//              if(ShowFeature == null)
-//                 return BadRequest("Feature details failed");
-//              return Ok();
-//         }
-//         [HttpPut]
-//         [Authorize]
-//        // [ValidateModel]
-//         [Route("{id:guid}")]
-//         public async Task<IActionResult> Update([FromRoute] Guid projectId, [FromRoute] Guid id, [FromBody] UpdateFeatureRequestDto updateFeatureRequestDto)
-//         {
-//             //call the Update Service layer method
-//             var UpdateFeature = await featureServices.UpdateFeatureAsync(project, id, feature);
-//             // if is not authenticated, the project doesnt exit or belong to the feature
-//             if(UpdateFeature == null)
-//                 return BadRequest("Feature update failed");
-//                 return Ok();   
-//         }
-//         [HttpDelete]
-//         [Authorize]
-//       //  [ValidateModel]
-//         [Route("{id:Guid}")]
-//         public async Task<IActionResult> Delete([FromRoute] Guid projectId, [FromRoute] Guid id )
-//         {
-//             var DeleteFeature = await featureServices.DeleteFeature(project,id);
-//             if(DeleteFeature == null)
-//             return BadRequest("Feature delection failed");
-//             return Ok();
-//         }
-//     }
-// }
-using AutoMapper;
+﻿using System;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using System;
-using System.Threading.Tasks;
-using ToggleBuddy.API.Helpers;
-using ToggleBuddy.API.Models.Domain;
-using ToggleBuddy.API.Models.DTOs.RequestDTOs;
-using ToggleBuddy.API.Models.DTOs.ResponseDTOs;
 using ToggleBuddy.API.Services.Interfaces;
+using ToggleBuddy.API.Models.DTOs.RequestDTOs;
+using ToggleBuddy.API.Models.Domain;
+using ToggleBuddy.API.Repositories.Interfaces;
+using ToggleBuddy.API.Repositories.Implementations;
+using System.Security.Claims;
+using ToggleBuddy.API.Helpers;
 
 namespace ToggleBuddy.API.Controllers
 {
@@ -89,53 +15,74 @@ namespace ToggleBuddy.API.Controllers
     [ApiController]
     public class FeatureController : ControllerBase
     {
-        private readonly IFeatureServices _featureServices;
-       // private readonly IUser _user;
+           private readonly IFeatureServices _featureServices;
+           private readonly IProjectRepository _projectRepository;
+           private readonly IUser _user;
 
-        public FeatureController(IFeatureServices featureServices)
+        public FeatureController(IFeatureServices featureServices, IProjectRepository projectRepository,IUser user)
         {
             _featureServices = featureServices;
-          //  _user = user;
+            _projectRepository = projectRepository;
+            _user = user;
         }
 
         [HttpPost]
         [Authorize]
-        public async Task<IActionResult> Create(Guid projectId, FeatureRequestDto featureRequestDto)
+        public async Task<IActionResult> Create([FromRoute] Guid ProjectId ,[FromBody] FeatureRequestDto featureRequestDto)
         {
-            var featureCreated = await _featureServices.CreateFeatureAsync(projectId, featureRequestDto);
-            if (featureCreated == null)
-                return BadRequest("Feature creation failed");
-            return Ok();
+          // Fetch project using projectId and user from the repository
+            var project = await _projectRepository.GetProjectByIdForCurrentUserAsync(ProjectId, User?.FindFirstValue(ClaimTypes.NameIdentifier));
+
+            // Check if project was found and belongs to the current user
+            if (project == null)
+            {
+                return NotFound("Project not found or not accessible to the current user.");
+            }
+
+            // Call the service method to update the feature
+            var response = await _featureServices.CreateFeatureAsync(project, User, featureRequestDto);
+
+            // Check the response status and return appropriate result
+            if (response.Status == ResponseStatus.NotFound)
+            {
+                return NotFound(response.Message);
+            }
+
+            return Ok(response);
+
         }
 
-        [HttpGet("{id:Guid}")]
-        [Authorize]
-        public async Task<IActionResult> Show(Guid projectId, Guid id)
-        {
-            var feature = await _featureServices.ShowFeatureAsync(project, id);
-            if (feature == null)
-                return BadRequest("Feature details failed");
-            return Ok();
-        }
+        // [HttpGet("{id:Guid}")]
+        // [Authorize]
+        // public async Task<IActionResult> Show([FromRoute] Guid id)
+        // {
+           
+        //     var ShowFeature = await _featureServices.ShowFeatureAsync(project, id, User);
+        //     if(ShowFeature == null)
+        //     return BadRequest("");
+        //     return Ok(ShowFeature);
+            
+        // }
 
-        [HttpPut("{id:Guid}")]
-        [Authorize]
-        public async Task<IActionResult> Update(Guid projectId, Guid id, UpdateFeatureRequestDto updateFeatureRequestDto)
-        {
-            var updatedFeature = await _featureServices.UpdateFeatureAsync(project, id, updateFeatureRequestDto);
-            if (updatedFeature == null)
-                return BadRequest("Feature update failed");
-            return Ok();
-        }
+        // [HttpPut("{id:Guid}")]
+        // [Authorize]
+        // public async Task<IActionResult> Update([FromRoute] Guid id, [FromBody] UpdateFeatureRequestDto updateFeatureRequestDto)
+        // {
+        //     var updateFeature = await _featureServices.UpdateFeatureAsync(project,id,updateFeatureRequestDto,User);
+        //     if(updateFeature == null)
+        //     return BadRequest("");
+        //     return Ok(updateFeature);
+           
+        // }
 
-        [HttpDelete("{id:Guid}")]
-        [Authorize]
-        public async Task<IActionResult> Delete(Guid projectId, Guid id)
-        {
-            var deleteFeature = await _featureServices.DeleteFeature(project, id);
-            if (deleteFeature == null)
-                return BadRequest("Feature deletion failed");
-            return Ok();
-        }
+        // [HttpDelete("{id:Guid}")]
+        // [Authorize]
+        // public async Task<IActionResult> Delete([FromRoute] Guid id)
+        // {
+        //     var deleteFeature = await _featureServices.DeleteFeature(project,id, User);
+        //     if(deleteFeature == null)return BadRequest("");
+        //     return Ok(deleteFeature);
+            
+        // }
     }
 }
