@@ -1,13 +1,13 @@
 ﻿using System;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using ToggleBuddy.API.Services.Interfaces;
 using ToggleBuddy.API.Models.DTOs.RequestDTOs;
 using ToggleBuddy.API.Models.Domain;
 using ToggleBuddy.API.Repositories.Interfaces;
 using ToggleBuddy.API.Repositories.Implementations;
 using System.Security.Claims;
 using ToggleBuddy.API.Helpers;
+using ToggleBuddy.API.Services.FeatureServices;
 
 namespace ToggleBuddy.API.Controllers
 {
@@ -34,20 +34,14 @@ namespace ToggleBuddy.API.Controllers
             var project = await _projectRepository.GetProjectByIdForCurrentUserAsync(projectId, User?.FindFirstValue(ClaimTypes.NameIdentifier));
 
             // Check if project was found and belongs to the current user
-            if (project == null)
-            {
-                return NotFound("Project not found or not accessible to the current user.");
-            }
-
+            if (project == null) return NotFound("Project not found or not accessible to the current user.");
+           
             // Call the service method to update the feature
             var response = await _featureServices.CreateFeatureAsync(project, User, featureRequestDto);
 
             // Check the response status and return appropriate result
-            if (response.Status == ResponseStatus.NotFound)
-            {
-                return NotFound(response.Message);
-            }
-
+            if (response.Status == ResponseStatus.NotFound)return NotFound(response.Message);
+            
             return Ok(response);
 
         }
@@ -59,19 +53,13 @@ namespace ToggleBuddy.API.Controllers
             // Retrieve the project using the provided projectId and current user
             var project = await _projectRepository.GetProjectByIdForCurrentUserAsync(projectId, User.FindFirst(ClaimTypes.NameIdentifier)?.Value);
             // Check if the project exists and belongs to the current user
-            if (project == null)
-            {
-                return NotFound("Project not found or not accessible to the current user.");
-            }
+            if (project == null) return NotFound("Project not found or not accessible to the current user.");
+            
             // Call the service method to show the feature
             var response = await _featureServices.ShowFeatureAsync(project, id, User);
 
             // Check the response status and return appropriate result
-            if (response.Status == ResponseStatus.NotFound)
-            {
-                return NotFound(response.Message);
-            }
-
+            if (response.Status == ResponseStatus.NotFound)return NotFound(response.Message);
             return Ok(response);
 
           }
@@ -82,22 +70,14 @@ namespace ToggleBuddy.API.Controllers
          {
             // Retrieve the project using the provided projectId and current user
             var project = await _projectRepository.GetProjectByIdForCurrentUserAsync(projectId, User.FindFirst(ClaimTypes.NameIdentifier)?.Value);
-
             // Check if the project exists and belongs to the current user
-            if (project == null)
-            {
-                return NotFound("Project not found or not accessible to the current user.");
-            }
-
+            if (project == null)return NotFound("Project not found or not accessible to the current user.");
+            
             // Call the service method to update the feature
             var response = await _featureServices.UpdateFeatureAsync(project, id, updateFeatureRequestDto, User);
 
             // Check the response status and return appropriate result
-            if (response.Status == ResponseStatus.NotFound)
-            {
-                return NotFound(response.Message);
-            }
-
+            if (response.Status == ResponseStatus.NotFound) return NotFound(response.Message);
             return Ok(response);
 
          }
@@ -111,20 +91,13 @@ namespace ToggleBuddy.API.Controllers
             var project = await _projectRepository.GetProjectByIdForCurrentUserAsync(projectId, User.FindFirst(ClaimTypes.NameIdentifier)?.Value);
 
             // Check if the project exists and belongs to the current user
-            if (project == null)
-            {
-                return NotFound("Project not found or not accessible to the current user.");
-            }
-
+            if (project == null) return NotFound("Project not found or not accessible to the current user.");
+            
             // Call the service method to delete the feature
             var response = await _featureServices.DeleteFeature(project, id, User);
 
             // Check the response status and return appropriate result
-            if (response.Status == ResponseStatus.NotFound)
-            {
-                return NotFound(response.Message);
-            }
-
+            if (response.Status == ResponseStatus.NotFound) return NotFound(response.Message);
             return Ok(response);
 
          }
