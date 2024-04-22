@@ -3,6 +3,7 @@ using ToggleBuddy.API.Data;
 using ToggleBuddy.API.Models.Domain;
 using ToggleBuddy.API.Respositories.Interfaces;
 
+
 namespace ToggleBuddy.API.Respositories.Implementations
 {
     public class FeatureEnvironmentRepository : IFeatureEnvironment
@@ -63,7 +64,5 @@ namespace ToggleBuddy.API.Respositories.Implementations
                 return null; // If the environment doesn't exist under the current feature, return null
             return environment;
         }
-
-
     }
 }
