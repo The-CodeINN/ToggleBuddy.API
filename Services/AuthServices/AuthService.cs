@@ -60,6 +60,7 @@ namespace ToggleBuddy.API.Services.AuthServices
                 return new ApiResponse<LoginResponseDto> { Message = "User not found", Status = ResponseStatus.Error };
             }
 
+            // Modify lockoutOnFailure to true when ready to implement account lockout
             var result = await _signInManager.CheckPasswordSignInAsync(user, loginRequestDto.Password, lockoutOnFailure: false);
 
             if (!result.Succeeded)
