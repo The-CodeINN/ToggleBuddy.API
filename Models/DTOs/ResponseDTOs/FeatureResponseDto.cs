@@ -1,15 +1,13 @@
-﻿namespace ToggleBuddy.API.Models.Domain
+﻿namespace ToggleBuddy.API.Models.DTOs.ResponseDTOs
 {
-    public class Project
+    public class FeatureResponseDto
     {
         public Guid Id { get; set; }
         public string Name { get; set; }
         public string Description { get; set; }
+        public DateTime ExpirationDate { get; set; }
         public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
         public DateTime UpdatedAt { get; set; } = DateTime.UtcNow;
-        public string UserId { get; set; }
 
-        // Navigation properties
-        public List<Feature> Features { get; set; } = []; // Initialize to avoid null reference issues
     }
 }

@@ -1,4 +1,4 @@
-﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using ToggleBuddy.API.Helpers;
 using ToggleBuddy.API.Models.DTOs.RequestDTOs;
@@ -25,7 +25,7 @@ namespace ToggleBuddy.API.Controllers
             var response = await _projectService.CreateProjectAsync(projectRequestDto, User);
             if (response.Status == ResponseStatus.Success && response.Result != null)
             {
-                return CreatedAtAction(nameof(GetProjectById), new { id = response.Result.Id }, response.Result);
+                return CreatedAtAction(nameof(GetProjectById), new { id = response.Result.Id }, response);
             }
             else
             {
