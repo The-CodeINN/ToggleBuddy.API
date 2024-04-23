@@ -1,45 +1,47 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using ToggleBuddy.API.Data;
 using ToggleBuddy.API.Models.Domain;
-using ToggleBuddy.API.Respositories.Interfaces;
+using ToggleBuddy.API.Repositories.Interfaces;
 
-namespace ToggleBuddy.API.Respositories.Implementations
+namespace ToggleBuddy.API.Repositories.Implementations
 {
     public class ProjectRepository : IProjectRepository
     {
-        private readonly ToggleBuddyDbContext dbContext;
+        private readonly ToggleBuddyDbContext _dbContext;
 
         public ProjectRepository(ToggleBuddyDbContext dbContext)
         {
-            this.dbContext = dbContext;
+            _dbContext = dbContext;
         }
 
         public async Task<Project> CreateProjectAsync(Project project)
         {
-            await dbContext.Projects.AddAsync(project);
-            await dbContext.SaveChangesAsync();
+            await _dbContext.Projects.AddAsync(project);
+            await _dbContext.SaveChangesAsync();
 
             return project;
         }
 
         public async Task<Project?> DeleteProjectAsync(Guid id)
         {
-            var existingProject = await dbContext.Projects.FirstOrDefaultAsync(p => p.Id == id);
+            var existingProject = await _dbContext.Projects.FirstOrDefaultAsync(p => p.Id == id);
 
             if (existingProject == null)
             {
                 return null;
             }
 
-            dbContext.Projects.Remove(existingProject);
-            await dbContext.SaveChangesAsync();
+            _dbContext.Projects.Remove(existingProject);
+            await _dbContext.SaveChangesAsync();
 
             return existingProject;
         }
 
+
+        // Refactor this method and use the user claims instead of passing the userId as a parameter
         public async Task<Project?> GetProjectByIdForCurrentUserAsync(Guid id, string? userId)
         {
-            var project = await dbContext.Projects.FindAsync(id);
+            var project = await _dbContext.Projects.FindAsync(id);
             if (project?.UserId != userId)
                 return null; // If the project does not belong to the current user, return null
             return project;
@@ -47,12 +49,12 @@ namespace ToggleBuddy.API.Respositories.Implementations
 
         public async Task<List<Project>> GetProjectsAsync()
         {
-            return await dbContext.Projects.ToListAsync();
+            return await _dbContext.Projects.ToListAsync();
         }
 
         public async Task<Project?> UpdateProjectAsync(Guid id, Project project)
         {
-            var existingProject = await dbContext.Projects.FirstOrDefaultAsync(p => p.Id == id);
+            var existingProject = await _dbContext.Projects.FirstOrDefaultAsync(p => p.Id == id);
             if (existingProject == null)
             {
                 return null;
@@ -61,7 +63,7 @@ namespace ToggleBuddy.API.Respositories.Implementations
             existingProject.Name = project.Name;
             existingProject.Description = project.Description;
 
-            await dbContext.SaveChangesAsync();
+            await _dbContext.SaveChangesAsync();
             return existingProject;
         }
     }

@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using ToggleBuddy.API.Data;
 
@@ -11,9 +12,11 @@ using ToggleBuddy.API.Data;
 namespace ToggleBuddy.API.Migrations
 {
     [DbContext(typeof(ToggleBuddyDbContext))]
-    partial class ToggleBuddyDbContextModelSnapshot : ModelSnapshot
+    [Migration("20240418070351_NewFeatureMigration")]
+    partial class NewFeatureMigration
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -34,7 +37,7 @@ namespace ToggleBuddy.API.Migrations
                     b.Property<string>("Description")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<DateTime?>("ExpirationDate")
+                    b.Property<DateTime>("ExpirationDate")
                         .HasColumnType("datetime2");
 
                     b.Property<string>("Name")
@@ -380,11 +383,13 @@ namespace ToggleBuddy.API.Migrations
 
             modelBuilder.Entity("ToggleBuddy.API.Models.Domain.Project", b =>
                 {
-                    b.HasOne("ToggleBuddy.API.Models.Domain.User", null)
+                    b.HasOne("ToggleBuddy.API.Models.Domain.User", "User")
                         .WithMany("Projects")
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("ToggleBuddy.API.Models.Domain.User", b =>
