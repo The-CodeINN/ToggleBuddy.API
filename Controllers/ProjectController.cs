@@ -25,7 +25,7 @@ namespace ToggleBuddy.API.Controllers
             var response = await _projectService.CreateProjectAsync(projectRequestDto, User);
             if (response.Status == ResponseStatus.Success && response.Result != null)
             {
-                return CreatedAtAction(nameof(GetProjectById), new { id = response.Result.Id }, response.Result);
+                return CreatedAtAction(nameof(GetProjectById), new { id = response.Result.Id }, response);
             }
             else
             {
@@ -45,7 +45,7 @@ namespace ToggleBuddy.API.Controllers
         [HttpGet("{id:Guid}")]
         public async Task<IActionResult> GetProjectById(Guid id)
         {
-            var response = await _projectService.GetProjectByIdForCurrentUserAsync(id, User);
+            var response = await _projectService.GetProjectByIdAsync(id, User);
             return HandleApiResponse(response);
         }
 
