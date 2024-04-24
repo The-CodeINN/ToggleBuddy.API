@@ -13,5 +13,5 @@ public class Feature
     public Guid ProjectId { get; set; }
 
     // Navigation properties
-     public Project Project { get; set; }
+    // public Project Project { get; set; }
 }

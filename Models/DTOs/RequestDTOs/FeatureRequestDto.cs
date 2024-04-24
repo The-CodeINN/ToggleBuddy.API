@@ -11,8 +11,5 @@ namespace ToggleBuddy.API.Models.DTOs.RequestDTOs
 
         [Required]
         public DateTime ExpirationDate { get; set; }
-
-
-
     }
 }

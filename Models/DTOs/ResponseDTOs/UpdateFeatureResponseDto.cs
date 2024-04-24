@@ -11,10 +11,10 @@ namespace ToggleBuddy.API.Models.DTOs.ResponseDTOs
         public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
         public DateTime UpdatedAt { get; set; } = DateTime.UtcNow;
 
-        // Foreign key
-        public Guid ProjectId { get; set; }
+        // // Foreign key
+        // public Guid ProjectId { get; set; }
 
-        // Navigation properties
-        public Project Project { get; set; }
+        // // Navigation properties
+        // public Project Project { get; set; }
     }
 }
