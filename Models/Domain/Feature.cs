@@ -14,4 +14,5 @@ public class Feature
 
     // Navigation properties
     // public Project Project { get; set; }
+    public List<FeatureEnvironment> FeatureEnvironment { get; set; } = [];
 }

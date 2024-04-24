@@ -10,12 +10,14 @@ namespace ToggleBuddy.API.Services.FeatureEnvironmentServices
 {
     public interface IFeatureEnvironmentServices
     {
-        Task<ApiResponse<FeatureEnvironmentResponseDto>> CreateFeatureEnvironmentAsync(Project project, Feature feature, FeatureEnvironmentRequestDto featureEnvironmentRequestDto);
+        Task<ApiResponse<FeatureEnvironmentResponseDto>> CreateFeatureEnvironmentAsync(Guid featureId, FeatureEnvironmentRequestDto featureEnvironmentRequestDto);
 
-        Task<ApiResponse<FeatureEnvironmentResponseDto>> ShowFeatureEnvironmentAsync(Feature feature, Guid id, ClaimsPrincipal userId);
+        Task<ApiResponse<List<FeatureEnvironmentResponseDto>>> ShowAllFeatureEnvironmentsAsync(Guid featureId);
 
-        // Task<ApiResponse<FeatureEnvironmentResponseDto>> UpdateFeatureEnvironmentAsync(Feature feature, Guid id, UpdateFeatureEnvironmentRequestDto updateFeatureEnvironmentRequestDto, ClaimsPrincipal userId);
+        Task<ApiResponse<FeatureEnvironmentResponseDto>> GetFeatureEnvironmentByIdAsync(Guid featureId, Guid featureEnvironmentId);
 
-        Task<ApiResponse<FeatureEnvironmentResponseDto>> DeleteFeatureEnvironment(Feature feature, Guid id, ClaimsPrincipal userId);
+        Task<ApiResponse<FeatureEnvironmentResponseDto>> UpdateFeatureEnvironmentAsync(Guid featureId, Guid featureEnvironmentId, FeatureEnvironmentRequestDto FeatureEnvironmentRequestDto);
+
+        Task<ApiResponse<FeatureEnvironmentResponseDto>> DeleteFeatureEnvironment(Guid featureId, Guid featureEnvironmentId);
     }
 }

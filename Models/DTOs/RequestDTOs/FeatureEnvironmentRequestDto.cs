@@ -5,7 +5,7 @@ namespace ToggleBuddy.API.Models.DTOs.RequestDTOs
     public class FeatureEnvironmentRequestDto
     {
         [Required]
-        public required string FeatureID { get; set; }
+        public required string FeatureId { get; set; }
 
         [Required]
         [MaxLength(50, ErrorMessage = "Name cannot be more than 50 characters"),

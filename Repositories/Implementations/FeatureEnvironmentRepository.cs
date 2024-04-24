@@ -8,59 +8,62 @@ namespace ToggleBuddy.API.Repositories.Implementations
 {
     public class FeatureEnvironmentRepository : IFeatureEnvironmentRepository
     {
-        private readonly ToggleBuddyDbContext dbContext;
+        private readonly ToggleBuddyDbContext _dbContext;
 
         public FeatureEnvironmentRepository(ToggleBuddyDbContext dbContext)
         {
-            this.dbContext = dbContext;
+            _dbContext = dbContext;
         }
 
-        public async Task<FeatureEnvironment> CreateFeatureEnvironmentAsync(FeatureEnvironment featureEnvironment)
+        public async Task<FeatureEnvironment> CreateFeatureEnvironmentAsync(Guid featureId, FeatureEnvironment featureEnvironment)
         {
-            await dbContext.FeatureEnvironments.AddAsync(featureEnvironment);
-            await dbContext.SaveChangesAsync();
+            await _dbContext.FeatureEnvironments.AddAsync(featureEnvironment);
+            await _dbContext.SaveChangesAsync();
 
             return featureEnvironment;
         }
 
-        public async Task<List<FeatureEnvironment>> GetFeatureEnvironmentAsync()
+        public async Task<List<FeatureEnvironment>> GetAllFeatureEnvironmentsAsync(Guid featureId)
         {
-            return await dbContext.FeatureEnvironments.ToListAsync();
+            return await _dbContext.FeatureEnvironments
+                .Where(e => e.FeatureId == featureId.ToString())
+                .ToListAsync();
         }
 
-        public async Task<FeatureEnvironment?> UpdateFeatureEnvironmentStatusAsync(Guid id, FeatureEnvironment featureEnvironment)
+        public async Task<FeatureEnvironment?> UpdateFeatureEnvironmentStatusAsync(Guid featureId, Guid featureEnvironmentId, FeatureEnvironment featureEnvironment)
         {
-            var existingFeatureEnvironment = await dbContext.FeatureEnvironments.FirstOrDefaultAsync(p => p.Id == id);
+            var existingFeatureEnvironment = await _dbContext.FeatureEnvironments.FirstOrDefaultAsync(e => e.Id == featureId && e.Id == featureEnvironmentId);
             if (existingFeatureEnvironment == null)
             {
                 return null;
             }
 
-            //insert implementation for checking if feature is enbled or disabled
+            //insert implementation for checking if feature is enabled or disabled
+            existingFeatureEnvironment.IsEnabled = featureEnvironment.IsEnabled;
+            existingFeatureEnvironment.UpdatedAt = featureEnvironment.UpdatedAt;
 
-
-            await dbContext.SaveChangesAsync();
+            await _dbContext.SaveChangesAsync();
             return existingFeatureEnvironment;
         }
 
-        public async Task<FeatureEnvironment?> DeleteFeatureEnvironmentAsync(Guid id)
+        public async Task<FeatureEnvironment?> DeleteFeatureEnvironmentAsync(Guid featureEnvironmentId)
         {
-            var existingFeatureEnvironment = await dbContext.FeatureEnvironments.FirstOrDefaultAsync(p => p.Id == id);
+            var existingFeatureEnvironment = await _dbContext.FeatureEnvironments.FirstOrDefaultAsync(e => e.Id == featureEnvironmentId);
             if (existingFeatureEnvironment == null)
             {
                 return null;
             }
 
-            dbContext.FeatureEnvironments.Remove(existingFeatureEnvironment);
-            await dbContext.SaveChangesAsync();
+            _dbContext.FeatureEnvironments.Remove(existingFeatureEnvironment);
+            await _dbContext.SaveChangesAsync();
 
             return existingFeatureEnvironment;
         }
 
-        public async Task<FeatureEnvironment?> GetFeatureEnvironmentByIdForCurrentFeatureAsync(Guid id, string? featureId)
+        public async Task<FeatureEnvironment?> GetFeatureEnvironmentByIdForCurrentFeatureAsync(Guid featureEnvironmentId, Guid featureId)
         {
-            var environment = await dbContext.FeatureEnvironments.FindAsync(id);
-            if (environment?.FeatureId != featureId)
+            var environment = await _dbContext.FeatureEnvironments.FindAsync(featureEnvironmentId);
+            if (environment?.FeatureId != featureId.ToString())
                 return null; // If the environment doesn't exist under the current feature, return null
             return environment;
         }
