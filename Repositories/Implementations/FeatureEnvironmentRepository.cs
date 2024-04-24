@@ -6,7 +6,7 @@ using ToggleBuddy.API.Repositories.Interfaces;
 
 namespace ToggleBuddy.API.Repositories.Implementations
 {
-    public class FeatureEnvironmentRepository : IFeatureEnvironment
+    public class FeatureEnvironmentRepository : IFeatureEnvironmentRepository
     {
         private readonly ToggleBuddyDbContext dbContext;
 

@@ -10,12 +10,12 @@ namespace ToggleBuddy.API.Services.FeatureEnvironmentServices
 {
     public interface IFeatureEnvironmentServices
     {
-        Task<ApiResponse<FeatureResponseDto>> CreateFeatureAsync(Project project, ClaimsPrincipal userId, FeatureRequestDto featureRequestDto);
+        Task<ApiResponse<FeatureEnvironmentResponseDto>> CreateFeatureEnvironmentAsync(Project project, Feature feature, FeatureEnvironmentRequestDto featureEnvironmentRequestDto);
 
-        Task<ApiResponse<FeatureResponseDto>> ShowFeatureAsync(Project project, Guid id, ClaimsPrincipal userId);
+        Task<ApiResponse<FeatureEnvironmentResponseDto>> ShowFeatureEnvironmentAsync(Feature feature, Guid id, ClaimsPrincipal userId);
 
-        Task<ApiResponse<FeatureResponseDto>> UpdateFeatureAsync(Project project, Guid id, UpdateFeatureRequestDto updateFeatureRequestDto, ClaimsPrincipal userId);
+        // Task<ApiResponse<FeatureEnvironmentResponseDto>> UpdateFeatureEnvironmentAsync(Feature feature, Guid id, UpdateFeatureEnvironmentRequestDto updateFeatureEnvironmentRequestDto, ClaimsPrincipal userId);
 
-        Task<ApiResponse<FeatureResponseDto>> DeleteFeature(Project project, Guid id, ClaimsPrincipal userId);
+        Task<ApiResponse<FeatureEnvironmentResponseDto>> DeleteFeatureEnvironment(Feature feature, Guid id, ClaimsPrincipal userId);
     }
 }

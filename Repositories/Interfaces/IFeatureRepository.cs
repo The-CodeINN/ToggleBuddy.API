@@ -11,6 +11,7 @@ namespace ToggleBuddy.API.Repositories.Interfaces
 
         public Task<Feature> UpdateAsync(Project project, Guid id, Feature feature);
 
+        // correct spelling of parameter to 'project not 'projet'
         public Task<ICollection<Feature>> GetAllAsync(Project projet);
 
         public Task<Feature> DeleteAsync(Project project, Guid id);
