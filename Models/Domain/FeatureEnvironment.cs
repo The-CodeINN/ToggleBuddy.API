@@ -13,7 +13,16 @@ namespace ToggleBuddy.API.Models.Domain
 
         public DateTime UpdatedAt { get; set; }
 
-        //Navigation Properties
-        public Feature Feature { get; set; }
+
+        // Setting non-nullable properties in the constructor
+        public FeatureEnvironment(string name, string description, string keyValue, bool isEnabled, string featureId)
+        {
+            Id = Guid.NewGuid();
+            Name = name;
+            Description = description;
+            KeyValue = keyValue;
+            IsEnabled = isEnabled;
+            FeatureId = featureId;
+        }
     }
 }

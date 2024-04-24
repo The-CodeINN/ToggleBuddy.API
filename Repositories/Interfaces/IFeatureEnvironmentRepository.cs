@@ -1,8 +1,8 @@
 using ToggleBuddy.API.Models.Domain;
 
-namespace ToggleBuddy.API.Respositories.Interfaces
+namespace ToggleBuddy.API.Repositories.Interfaces
 {
-    public interface IFeatureEnvironment
+    public interface IFeatureEnvironmentRepository
     {
         Task<FeatureEnvironment> CreateFeatureEnvironmentAsync(FeatureEnvironment featureEnvironment);
         Task<List<FeatureEnvironment>> GetFeatureEnvironmentAsync();
