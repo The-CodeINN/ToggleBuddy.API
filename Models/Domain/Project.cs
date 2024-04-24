@@ -10,7 +10,6 @@
         public string UserId { get; set; }
 
         // Navigation properties
-        // public User User { get; set; }
-
+        public List<Feature> Features { get; set; } = []; // Initialize to avoid null reference issues
     }
 }

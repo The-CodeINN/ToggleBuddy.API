@@ -1,68 +1,78 @@
-﻿using AutoMapper.Features;
-using Microsoft.AspNetCore.Http.HttpResults;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 using ToggleBuddy.API.Data;
 using ToggleBuddy.API.Models.Domain;
 using ToggleBuddy.API.Repositories.Interfaces;
 
 namespace ToggleBuddy.API.Repositories.Implementations
 {
-    public class FeatureRepository(ToggleBuddyDbContext dbContext) : IFeatureRepository
+    public class FeatureRepository : IFeatureRepository
     {
-       
-        public async Task<Feature> CreateAsync(Feature feature)
+        private readonly ToggleBuddyDbContext _dbContext;
+
+        public FeatureRepository(ToggleBuddyDbContext dbContext)
         {
-            await dbContext.Features.AddAsync(feature);
-            await dbContext.SaveChangesAsync();
+            _dbContext = dbContext;
+        }
+
+        public async Task<Feature> CreateAsync(Feature feature, Guid projectId)
+        {
+            feature.ProjectId = projectId; // Ensure the feature is linked to the correct project
+            await _dbContext.Features.AddAsync(feature);
+            await _dbContext.SaveChangesAsync();
             return feature;
         }
 
-        public async Task<Feature> DeleteAsync(Project project, Guid id)
+        public async Task<Feature?> ShowAsync(Guid projectId, Guid featureId)
         {
-            var delectFeature = await dbContext.Features.FirstOrDefaultAsync(p => p.Id == id && p.Project.Id==project.Id);
-           if(delectFeature == null) 
+            return await _dbContext.Features
+                .Where(f => f.Id == featureId && f.ProjectId == projectId)
+                .FirstOrDefaultAsync();
+        }
+
+        public async Task<Feature?> UpdateAsync(Feature feature, Guid projectId, Guid featureId)
+        {
+            var existingFeature = await _dbContext.Features
+                .FirstOrDefaultAsync(f => f.Id == featureId && f.ProjectId == projectId);
+
+            if (existingFeature == null)
+            {
+                throw new KeyNotFoundException("Feature not found.");
+            }
+
+            // Update properties
+            existingFeature.Name = feature.Name;
+            existingFeature.Description = feature.Description;
+            existingFeature.ExpirationDate = feature.ExpirationDate;
+            existingFeature.UpdatedAt = DateTime.UtcNow;
+
+            await _dbContext.SaveChangesAsync();
+            return existingFeature;
+        }
+
+        public async Task<ICollection<Feature>> GetAllAsync(Guid projectId)
+        {
+            return await _dbContext.Features
+                .Where(f => f.ProjectId == projectId)
+                .ToListAsync();
+        }
+
+        public async Task<Feature?> DeleteAsync(Guid projectId, Guid featureId)
+        {
+            var featureToDelete = await _dbContext.Features
+                .FirstOrDefaultAsync(f => f.Id == featureId && f.ProjectId == projectId);
+
+            if (featureToDelete == null)
             {
                 return null;
             }
 
-           dbContext.Features.Remove(delectFeature);
-           await dbContext.SaveChangesAsync();
-            return delectFeature;
-
-        }
-
-        public Task<ICollection<Feature>> GetAllAsync(Project projet)
-        {
-            throw new NotImplementedException();
-        }
-
-        public async Task<Feature> ShowAsync(Project project, Guid id)
-        {
-            var feature = await dbContext.Features.FirstOrDefaultAsync(x => x.Id == id && x.Project.Id==project.Id);
-            if(feature == null)
-            {
-                return null;
-            }
-           
-            return feature;
-        }
-
-        public async Task<Feature> UpdateAsync(Project project, Guid id, Feature feature)
-        {
-            var updateFeature = await dbContext.Features.FirstOrDefaultAsync(x => x.Id == id && x.Project.Id == project.Id);
-            if(updateFeature == null) 
-
-                return null;
-
-            updateFeature.Name = feature.Name;
-            updateFeature.Description = feature.Description;
-            updateFeature.ExpirationDate = feature.ExpirationDate;
-            
-            await dbContext.SaveChangesAsync();
-            return updateFeature;
-
-            
-
+            _dbContext.Features.Remove(featureToDelete);
+            await _dbContext.SaveChangesAsync();
+            return featureToDelete;
         }
     }
 }

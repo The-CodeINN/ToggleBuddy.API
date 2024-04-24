@@ -5,14 +5,14 @@ namespace ToggleBuddy.API.Repositories.Interfaces
 {
     public interface IFeatureRepository
     {
-        public Task<Feature> CreateAsync(Feature feature);
+        public Task<Feature> CreateAsync(Feature feature, Guid projectId);
 
-        public Task<Feature> ShowAsync(Project project, Guid id);
+        public Task<Feature?> ShowAsync(Guid projectId, Guid featureId);
 
-        public Task<Feature> UpdateAsync(Project project, Guid id, Feature feature);
+        public Task<Feature?> UpdateAsync(Feature feature, Guid projectId, Guid featureId);
 
-        public Task<ICollection<Feature>> GetAllAsync(Project projet);
+        public Task<ICollection<Feature>> GetAllAsync(Guid projectId);
 
-        public Task<Feature> DeleteAsync(Project project, Guid id);
+        public Task<Feature?> DeleteAsync(Guid projectId, Guid featureId);
     }
 }

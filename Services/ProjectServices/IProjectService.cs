@@ -9,10 +9,10 @@ namespace ToggleBuddy.API.Services.ProjectServices
 
     public interface IProjectService
     {
-        Task<ApiResponse<ProjectResponseDto>> CreateProjectAsync(ProjectRequestDto project, ClaimsPrincipal userId);
-        Task<ApiResponse<ProjectResponseDto>> DeleteProjectAsync(Guid id, ClaimsPrincipal userId);
-        Task<ApiResponse<ProjectResponseDto>> GetProjectByIdForCurrentUserAsync(Guid id, ClaimsPrincipal userId);
-        Task<ApiResponse<List<ProjectResponseDto>>> GetProjectsAsync(ClaimsPrincipal userId);
-        Task<ApiResponse<ProjectResponseDto>> UpdateProjectAsync(Guid id, ProjectRequestDto project, ClaimsPrincipal userId);
+        Task<ApiResponse<ProjectResponseDto>> CreateProjectAsync(ProjectRequestDto project, ClaimsPrincipal claimsPrincipal);
+        Task<ApiResponse<ProjectResponseDto>> DeleteProjectAsync(Guid id, ClaimsPrincipal claimsPrincipal);
+        Task<ApiResponse<ProjectResponseDto>> GetProjectByIdAsync(Guid id, ClaimsPrincipal claimsPrincipal);
+        Task<ApiResponse<List<ProjectResponseDto>>> GetProjectsAsync(ClaimsPrincipal claimsPrincipal);
+        Task<ApiResponse<ProjectResponseDto>> UpdateProjectAsync(Guid id, ProjectRequestDto project, ClaimsPrincipal claimsPrincipal);
     }
 }

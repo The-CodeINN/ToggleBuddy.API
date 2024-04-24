@@ -4,12 +4,10 @@ namespace ToggleBuddy.API.Repositories.Interfaces
 {
     public interface IProjectRepository
     {
-        Task<List<Project>> GetProjectsAsync();
+        Task<List<Project>> GetProjectsAsync(string userId);
         Task<Project> CreateProjectAsync(Project project);
-        Task<Project?> UpdateProjectAsync(Guid id, Project project);
-        Task<Project?> DeleteProjectAsync(Guid id);
-        Task<Project?> GetProjectByIdForCurrentUserAsync(Guid id, string userId);
-     
-
+        Task<Project?> UpdateProjectAsync(Guid id, Project project, string userId);
+        Task<Project?> DeleteProjectAsync(Guid id, string userId);
+        Task<Project?> GetProjectByIdAsync(Guid id, string userId);
     }
 }

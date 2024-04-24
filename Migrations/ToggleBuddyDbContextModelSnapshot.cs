@@ -318,13 +318,11 @@ namespace ToggleBuddy.API.Migrations
 
             modelBuilder.Entity("Feature", b =>
                 {
-                    b.HasOne("ToggleBuddy.API.Models.Domain.Project", "Project")
-                        .WithMany()
+                    b.HasOne("ToggleBuddy.API.Models.Domain.Project", null)
+                        .WithMany("Features")
                         .HasForeignKey("ProjectId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
-
-                    b.Navigation("Project");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
@@ -385,6 +383,11 @@ namespace ToggleBuddy.API.Migrations
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+                });
+
+            modelBuilder.Entity("ToggleBuddy.API.Models.Domain.Project", b =>
+                {
+                    b.Navigation("Features");
                 });
 
             modelBuilder.Entity("ToggleBuddy.API.Models.Domain.User", b =>
