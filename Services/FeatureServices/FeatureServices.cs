@@ -13,14 +13,17 @@ namespace ToggleBuddy.API.Services.FeatureServices
     {
         private readonly IMapper _mapper;
         private readonly IFeatureRepository _featureRepository;
+        private readonly ILogger<FeatureServices> logger;
 
         public FeatureServices(
                 IMapper mapper,
-                IFeatureRepository featureRepository
+                IFeatureRepository featureRepository,
+                ILogger<FeatureServices> logger
                )
         {
             _mapper = mapper;
             _featureRepository = featureRepository;
+            this.logger = logger;
         }
 
         public async Task<ApiResponse<FeatureResponseDto>> CreateFeatureAsync(FeatureRequestDto featureRequestDto, Guid projectId)

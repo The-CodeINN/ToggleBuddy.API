@@ -12,10 +12,12 @@ namespace ToggleBuddy.API.Controllers
     public class ProjectController : ControllerBase
     {
         private readonly IProjectService _projectService;
+        private readonly ILogger<ProjectController> logger;
 
-        public ProjectController(IProjectService projectService)
+        public ProjectController(IProjectService projectService, ILogger<ProjectController> logger)
         {
             _projectService = projectService;
+            this.logger = logger;
         }
 
         // POST: api/Project

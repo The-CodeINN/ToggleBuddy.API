@@ -16,10 +16,13 @@ namespace ToggleBuddy.API.Controllers
   public class FeatureController : ControllerBase
   {
     private readonly IFeatureServices _featureServices;
-    public FeatureController(IFeatureServices featureServices)
+        private readonly ILogger<FeatureController> logger;
+
+        public FeatureController(IFeatureServices featureServices, ILogger<FeatureController> logger)
     {
       _featureServices = featureServices;
-    }
+            this.logger = logger;
+        }
 
     [HttpPost]
     [Authorize]

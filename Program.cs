@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
+using Serilog;
 using System.Text;
 using ToggleBuddy.API.Data;
 using ToggleBuddy.API.Mappings;
@@ -22,6 +23,13 @@ namespace ToggleBuddy.API
             var builder = WebApplication.CreateBuilder(args);
 
             // Add services to the container.
+            var logger = new LoggerConfiguration()
+                . WriteTo.Console()
+                .WriteTo.File("Logs/ToggleBuddy_Log.txt", rollingInterval:RollingInterval.Day)
+                .MinimumLevel.Information()
+                .CreateLogger();
+            builder.Logging.ClearProviders();
+            builder.Services.AddSerilog(logger);
 
             builder.Services.AddControllers();
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle

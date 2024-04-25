@@ -15,11 +15,13 @@ namespace ToggleBuddy.API.Services.ProjectServices
     {
         private readonly IMapper _mapper;
         private readonly IProjectRepository _projectRepository;
+        private readonly ILogger<ProjectService> logger;
 
-        public ProjectService(IMapper mapper, IProjectRepository projectRepository)
+        public ProjectService(IMapper mapper, IProjectRepository projectRepository,ILogger<ProjectService> logger)
         {
             _mapper = mapper;
             _projectRepository = projectRepository;
+            this.logger = logger;
         }
 
         public async Task<ApiResponse<ProjectResponseDto>> CreateProjectAsync(ProjectRequestDto projectRequestDto, ClaimsPrincipal claimsPrincipal)
