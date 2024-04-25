@@ -4,7 +4,7 @@ namespace ToggleBuddy.API.Models.Domain
     public class FeatureEnvironment
     {
         public Guid Id { get; set; }
-        public string FeatureId { get; set; } = null!;
+        public Guid FeatureId { get; set; }
         public string Name { get; set; } = null!;
         public Boolean IsEnabled { get; set; }
         public string Description { get; set; } = null!;

@@ -17,6 +17,7 @@ namespace ToggleBuddy.API.Repositories.Implementations
 
         public async Task<FeatureEnvironment> CreateFeatureEnvironmentAsync(Guid featureId, FeatureEnvironment featureEnvironment)
         {
+            featureEnvironment.FeatureId = featureId;
             await _dbContext.FeatureEnvironments.AddAsync(featureEnvironment);
             await _dbContext.SaveChangesAsync();
 
@@ -26,7 +27,7 @@ namespace ToggleBuddy.API.Repositories.Implementations
         public async Task<List<FeatureEnvironment>> GetAllFeatureEnvironmentsAsync(Guid featureId)
         {
             return await _dbContext.FeatureEnvironments
-                .Where(e => e.FeatureId == featureId.ToString())
+                .Where(e => e.FeatureId == featureId)
                 .ToListAsync();
         }
 
@@ -63,7 +64,7 @@ namespace ToggleBuddy.API.Repositories.Implementations
         public async Task<FeatureEnvironment?> GetFeatureEnvironmentByIdForCurrentFeatureAsync(Guid featureEnvironmentId, Guid featureId)
         {
             var environment = await _dbContext.FeatureEnvironments.FindAsync(featureEnvironmentId);
-            if (environment?.FeatureId != featureId.ToString())
+            if (environment?.FeatureId != featureId)
                 return null; // If the environment doesn't exist under the current feature, return null
             return environment;
         }
