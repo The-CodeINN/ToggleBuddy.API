@@ -10,6 +10,7 @@ namespace ToggleBuddy.API.Helpers
             return response.Status switch
             {
                 ResponseStatus.Success => new OkObjectResult(response),
+                ResponseStatus.Error => new BadRequestObjectResult(response),
                 ResponseStatus.NotFound => new NotFoundObjectResult(response),
                 _ => new StatusCodeResult(500)
             };
