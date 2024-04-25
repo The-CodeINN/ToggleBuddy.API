@@ -7,9 +7,9 @@ namespace ToggleBuddy.API.Services.AuthServices
 {
     public interface IAuthService
     {
-        Task<ApiResponse<UserDto>> RegisterAsync(RegisterRequestDto registerRequestDto);
-        Task<ApiResponse<LoginResponseDto>> LoginAsync(LoginRequestDto loginRequestDto);
-        Task<ApiResponse<UserDto>> GetCurrentUserInfoAsync(ClaimsPrincipal user);
+        Task<ServiceResponse<UserDto>> RegisterAsync(RegisterRequestDto registerRequestDto);
+        Task<ServiceResponse<LoginResponseDto>> LoginAsync(LoginRequestDto loginRequestDto);
+        Task<ServiceResponse<UserDto>> GetCurrentUserInfoAsync(ClaimsPrincipal user);
     }
 
 }

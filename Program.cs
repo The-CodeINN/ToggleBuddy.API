@@ -5,6 +5,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
 using ToggleBuddy.API.Data;
+using ToggleBuddy.API.Helpers;
 using ToggleBuddy.API.Mappings;
 using ToggleBuddy.API.Models.Domain;
 using ToggleBuddy.API.Repositories.Implementations;
@@ -94,6 +95,8 @@ namespace ToggleBuddy.API
             }
 
             app.UseHttpsRedirection();
+            app.UseCustomExceptionHandler();
+
             app.UseAuthentication();
             app.UseAuthorization();
 
