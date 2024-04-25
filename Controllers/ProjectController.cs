@@ -29,7 +29,7 @@ namespace ToggleBuddy.API.Controllers
             }
             else
             {
-                return HandleApiResponse(response);
+                return Utilities.HandleApiResponse(response);
             }
         }
 
@@ -38,7 +38,7 @@ namespace ToggleBuddy.API.Controllers
         public async Task<IActionResult> GetProjects()
         {
             var response = await _projectService.GetProjectsAsync(User);
-            return HandleApiResponse(response);
+            return Utilities.HandleApiResponse(response);
         }
 
         // GET: api/Project/{id}
@@ -46,7 +46,7 @@ namespace ToggleBuddy.API.Controllers
         public async Task<IActionResult> GetProjectById(Guid id)
         {
             var response = await _projectService.GetProjectByIdAsync(id, User);
-            return HandleApiResponse(response);
+            return Utilities.HandleApiResponse(response);
         }
 
         // PUT: api/Project/{id}
@@ -54,7 +54,7 @@ namespace ToggleBuddy.API.Controllers
         public async Task<IActionResult> UpdateProjectById(Guid id, [FromBody] ProjectRequestDto projectRequestDto)
         {
             var response = await _projectService.UpdateProjectAsync(id, projectRequestDto, User);
-            return HandleApiResponse(response);
+            return Utilities.HandleApiResponse(response);
         }
 
         // DELETE: api/Project/{id}
@@ -62,18 +62,7 @@ namespace ToggleBuddy.API.Controllers
         public async Task<IActionResult> DeleteProjectById(Guid id)
         {
             var response = await _projectService.DeleteProjectAsync(id, User);
-            return HandleApiResponse(response);
-        }
-
-        private IActionResult HandleApiResponse<T>(ApiResponse<T> response)
-        {
-            return response.Status switch
-            {
-                ResponseStatus.Success => Ok(response),
-                ResponseStatus.NotFound => NotFound(response),
-                ResponseStatus.BadRequest => BadRequest(response),
-                _ => StatusCode(500, response)
-            };
+            return Utilities.HandleApiResponse(response);
         }
     }
 }

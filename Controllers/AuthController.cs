@@ -21,32 +21,21 @@ namespace ToggleBuddy.API.Controllers
         public async Task<IActionResult> Register([FromBody] RegisterRequestDto registerRequestDto)
         {
             var response = await _authService.RegisterAsync(registerRequestDto);
-            return HandleApiResponse(response);
+            return Utilities.HandleApiResponse(response);
         }
 
         [HttpPost("Login")]
         public async Task<IActionResult> Login([FromBody] LoginRequestDto loginRequestDto)
         {
             var response = await _authService.LoginAsync(loginRequestDto);
-            return HandleApiResponse(response);
+            return Utilities.HandleApiResponse(response);
         }
 
         [HttpGet("me")]
         public async Task<IActionResult> GetCurrentUserInfo()
         {
             var response = await _authService.GetCurrentUserInfoAsync(User);
-            return HandleApiResponse(response);
-        }
-
-        private IActionResult HandleApiResponse<T>(ApiResponse<T> response)
-        {
-            return response.Status switch
-            {
-                ResponseStatus.Success => Ok(response),
-                ResponseStatus.Error => BadRequest(response),
-                ResponseStatus.NotFound => NotFound(response),
-                _ => StatusCode(500, response)
-            };
+            return Utilities.HandleApiResponse(response);
         }
     }
 }

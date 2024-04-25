@@ -23,7 +23,7 @@ namespace ToggleBuddy.API.Services.FeatureServices
             _featureRepository = featureRepository;
         }
 
-        public async Task<ApiResponse<FeatureResponseDto>> CreateFeatureAsync(FeatureRequestDto featureRequestDto, Guid projectId)
+        public async Task<ServiceResponse<FeatureResponseDto>> CreateFeatureAsync(FeatureRequestDto featureRequestDto, Guid projectId)
         {
             var featureModel = _mapper.Map<Feature>(featureRequestDto);
             featureModel.ProjectId = projectId;
@@ -32,53 +32,53 @@ namespace ToggleBuddy.API.Services.FeatureServices
 
             var featureResponseDto = _mapper.Map<FeatureResponseDto>(createdFeature);
 
-            return new ApiResponse<FeatureResponseDto> { Result = featureResponseDto, Message = "Feature created successfully", Status = ResponseStatus.Success };
+            return new ServiceResponse<FeatureResponseDto> { Result = featureResponseDto, Message = "Feature created successfully", Status = ResponseStatus.Success };
         }
 
-        public async Task<ApiResponse<FeatureResponseDto>> DeleteFeatureAsync(Guid projectId, Guid featureId)
+        public async Task<ServiceResponse<FeatureResponseDto>> DeleteFeatureAsync(Guid projectId, Guid featureId)
         {
             var feature = await _featureRepository.DeleteAsync(projectId, featureId);
 
             if (feature == null)
-                return new ApiResponse<FeatureResponseDto> { Message = "Feature not found", Status = ResponseStatus.NotFound };
+                return new ServiceResponse<FeatureResponseDto> { Message = "Feature not found", Status = ResponseStatus.NotFound };
 
-            return new ApiResponse<FeatureResponseDto> { Result = _mapper.Map<FeatureResponseDto>(feature), Message = "Feature deleted successfully", Status = ResponseStatus.Success };
+            return new ServiceResponse<FeatureResponseDto> { Result = _mapper.Map<FeatureResponseDto>(feature), Message = "Feature deleted successfully", Status = ResponseStatus.Success };
         }
 
-        public async Task<ApiResponse<FeatureResponseDto>> GetFeatureDetailsByProjectIdAsync(Guid projectId, Guid featureId)
+        public async Task<ServiceResponse<FeatureResponseDto>> GetFeatureDetailsByProjectIdAsync(Guid projectId, Guid featureId)
         {
             var feature = await _featureRepository.ShowAsync(projectId, featureId);
 
             if (feature == null)
-                return new ApiResponse<FeatureResponseDto> { Message = "Feature not found", Status = ResponseStatus.NotFound };
+                return new ServiceResponse<FeatureResponseDto> { Message = "Feature not found", Status = ResponseStatus.NotFound };
 
-            return new ApiResponse<FeatureResponseDto> { Result = _mapper.Map<FeatureResponseDto>(feature), Message = "Feature retrieved successfully", Status = ResponseStatus.Success };
+            return new ServiceResponse<FeatureResponseDto> { Result = _mapper.Map<FeatureResponseDto>(feature), Message = "Feature retrieved successfully", Status = ResponseStatus.Success };
         }
 
-        public async Task<ApiResponse<List<FeatureResponseDto>>> GetFeaturesByProjectIdAsync(Guid projectId)
+        public async Task<ServiceResponse<List<FeatureResponseDto>>> GetFeaturesByProjectIdAsync(Guid projectId)
         {
             var features = await _featureRepository.GetAllAsync(projectId);
 
             if (features == null)
-                return new ApiResponse<List<FeatureResponseDto>> { Message = "Features not found", Status = ResponseStatus.NotFound };
+                return new ServiceResponse<List<FeatureResponseDto>> { Message = "Features not found", Status = ResponseStatus.NotFound };
 
             var projectResponseDtos = _mapper.Map<List<FeatureResponseDto>>(features);
 
-            return new ApiResponse<List<FeatureResponseDto>> { Result = projectResponseDtos, Message = "Features retrieved successfully", Status = ResponseStatus.Success };
+            return new ServiceResponse<List<FeatureResponseDto>> { Result = projectResponseDtos, Message = "Features retrieved successfully", Status = ResponseStatus.Success };
 
             // return  list of features
         }
 
-        public async Task<ApiResponse<UpdateFeatureResponseDto>> UpdateFeatureAsync(UpdateFeatureRequestDto featureRequestDto, Guid projectId, Guid featureId)
+        public async Task<ServiceResponse<UpdateFeatureResponseDto>> UpdateFeatureAsync(UpdateFeatureRequestDto featureRequestDto, Guid projectId, Guid featureId)
         {
             var featureModel = _mapper.Map<Feature>(featureRequestDto);
 
             var updatedFeature = await _featureRepository.UpdateAsync(featureModel, projectId, featureId);
 
             if (updatedFeature == null)
-                return new ApiResponse<UpdateFeatureResponseDto> { Message = "Feature not found", Status = ResponseStatus.NotFound };
+                return new ServiceResponse<UpdateFeatureResponseDto> { Message = "Feature not found", Status = ResponseStatus.NotFound };
 
-            return new ApiResponse<UpdateFeatureResponseDto> { Result = _mapper.Map<UpdateFeatureResponseDto>(updatedFeature), Message = "Feature updated successfully", Status = ResponseStatus.Success };
+            return new ServiceResponse<UpdateFeatureResponseDto> { Result = _mapper.Map<UpdateFeatureResponseDto>(updatedFeature), Message = "Feature updated successfully", Status = ResponseStatus.Success };
         }
 
     }
