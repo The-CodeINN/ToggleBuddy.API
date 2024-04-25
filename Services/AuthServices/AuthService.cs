@@ -28,7 +28,7 @@ namespace ToggleBuddy.API.Services.AuthServices
 
         }
 
-        public async Task<ApiResponse<UserDto>> RegisterAsync(RegisterRequestDto registerRequestDto)
+        public async Task<ServiceResponse<UserDto>> RegisterAsync(RegisterRequestDto registerRequestDto)
         {
             var user = new User
             {
@@ -43,21 +43,21 @@ namespace ToggleBuddy.API.Services.AuthServices
 
             if (!result.Succeeded)
             {
-                return new ApiResponse<UserDto> { Message = result.Errors.FirstOrDefault()?.Description ?? "User registration failed", Status = ResponseStatus.Error };
+                return new ServiceResponse<UserDto> { Message = result.Errors.FirstOrDefault()?.Description ?? "User registration failed", Status = ResponseStatus.Error };
             }
 
             var registerResponse = _mapper.Map<UserDto>(user);
 
-            return new ApiResponse<UserDto> { Result = registerResponse, Message = "User registered successfully", Status = ResponseStatus.Success };
+            return new ServiceResponse<UserDto> { Result = registerResponse, Message = "User registered successfully", Status = ResponseStatus.Success };
         }
 
-        public async Task<ApiResponse<LoginResponseDto>> LoginAsync(LoginRequestDto loginRequestDto)
+        public async Task<ServiceResponse<LoginResponseDto>> LoginAsync(LoginRequestDto loginRequestDto)
         {
             var user = await _userManager.FindByEmailAsync(loginRequestDto.Email);
 
             if (user == null)
             {
-                return new ApiResponse<LoginResponseDto> { Message = "User not found", Status = ResponseStatus.Error };
+                return new ServiceResponse<LoginResponseDto> { Message = "User not found", Status = ResponseStatus.Error };
             }
 
             // Modify lockoutOnFailure to true when ready to implement account lockout
@@ -65,7 +65,7 @@ namespace ToggleBuddy.API.Services.AuthServices
 
             if (!result.Succeeded)
             {
-                return new ApiResponse<LoginResponseDto> { Message = "Invalid login attempt", Status = ResponseStatus.Error };
+                return new ServiceResponse<LoginResponseDto> { Message = "Invalid login attempt", Status = ResponseStatus.Error };
             }
 
             var token = _tokenRepository.CreateJWTToken(user);
@@ -76,21 +76,21 @@ namespace ToggleBuddy.API.Services.AuthServices
                 User = _mapper.Map<UserDto>(user)
             };
 
-            return new ApiResponse<LoginResponseDto> { Result = loginResponse, Message = "User logged in successfully", Status = ResponseStatus.Success };
+            return new ServiceResponse<LoginResponseDto> { Result = loginResponse, Message = "User logged in successfully", Status = ResponseStatus.Success };
 
         }
 
-        public async Task<ApiResponse<UserDto>> GetCurrentUserInfoAsync(ClaimsPrincipal userId)
+        public async Task<ServiceResponse<UserDto>> GetCurrentUserInfoAsync(ClaimsPrincipal userId)
         {
             var user = await _user.GetCurrentUserAsync(userId);
             if (user == null)
             {
-                return new ApiResponse<UserDto> { Message = "User not found", Status = ResponseStatus.NotFound };
+                return new ServiceResponse<UserDto> { Message = "User not found", Status = ResponseStatus.NotFound };
             }
 
             var userResponse = _mapper.Map<UserDto>(user);
 
-            return new ApiResponse<UserDto> { Result = userResponse, Message = "User retrieved successfully", Status = ResponseStatus.Success };
+            return new ServiceResponse<UserDto> { Result = userResponse, Message = "User retrieved successfully", Status = ResponseStatus.Success };
         }
     }
 }

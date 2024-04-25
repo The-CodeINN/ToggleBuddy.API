@@ -32,7 +32,7 @@ namespace ToggleBuddy.API.Controllers
       }
       else
       {
-        return HandleApiResponse(response);
+        return Utilities.HandleApiResponse(response);
       }
     }
 
@@ -42,7 +42,7 @@ namespace ToggleBuddy.API.Controllers
     public async Task<IActionResult> GetFeatureDetailsByProjectId([FromRoute] Guid projectId, [FromRoute] Guid id)
     {
       var response = await _featureServices.GetFeatureDetailsByProjectIdAsync(projectId, id);
-      return HandleApiResponse(response);
+      return Utilities.HandleApiResponse(response);
     }
 
     [HttpGet]
@@ -50,7 +50,7 @@ namespace ToggleBuddy.API.Controllers
     public async Task<IActionResult> GetFeatures([FromRoute] Guid projectId)
     {
       var response = await _featureServices.GetFeaturesByProjectIdAsync(projectId);
-      return HandleApiResponse(response);
+      return Utilities.HandleApiResponse(response);
     }
 
 
@@ -60,7 +60,7 @@ namespace ToggleBuddy.API.Controllers
     public async Task<IActionResult> UpdateFeature([FromRoute] Guid projectId, [FromRoute] Guid id, [FromBody] UpdateFeatureRequestDto updateFeatureRequestDto)
     {
       var response = await _featureServices.UpdateFeatureAsync(updateFeatureRequestDto, projectId, id);
-      return HandleApiResponse(response);
+      return Utilities.HandleApiResponse(response);
     }
 
     [HttpDelete]
@@ -69,18 +69,7 @@ namespace ToggleBuddy.API.Controllers
     public async Task<IActionResult> Delete([FromRoute] Guid projectId, [FromRoute] Guid id)
     {
       var response = await _featureServices.DeleteFeatureAsync(projectId, id);
-      return HandleApiResponse(response);
-    }
-
-    private IActionResult HandleApiResponse<T>(ApiResponse<T> response)
-    {
-      return response.Status switch
-      {
-        ResponseStatus.Success => Ok(response),
-        ResponseStatus.NotFound => NotFound(response),
-        ResponseStatus.BadRequest => BadRequest(response),
-        _ => StatusCode(500, response)
-      };
+      return Utilities.HandleApiResponse(response);
     }
   }
 }

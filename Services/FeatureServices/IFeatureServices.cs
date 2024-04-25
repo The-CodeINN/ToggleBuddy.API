@@ -10,14 +10,14 @@ namespace ToggleBuddy.API.Services.FeatureServices
 {
     public interface IFeatureServices
     {
-        Task<ApiResponse<FeatureResponseDto>> CreateFeatureAsync(FeatureRequestDto featureRequestDto, Guid projectId);
+        Task<ServiceResponse<FeatureResponseDto>> CreateFeatureAsync(FeatureRequestDto featureRequestDto, Guid projectId);
 
-        Task<ApiResponse<List<FeatureResponseDto>>> GetFeaturesByProjectIdAsync(Guid projectId);
+        Task<ServiceResponse<List<FeatureResponseDto>>> GetFeaturesByProjectIdAsync(Guid projectId);
 
-        Task<ApiResponse<FeatureResponseDto>> GetFeatureDetailsByProjectIdAsync(Guid projectId, Guid featureId);
+        Task<ServiceResponse<FeatureResponseDto>> GetFeatureDetailsByProjectIdAsync(Guid projectId, Guid featureId);
 
-        Task<ApiResponse<UpdateFeatureResponseDto>> UpdateFeatureAsync(UpdateFeatureRequestDto featureRequestDto, Guid projectId, Guid featureId);
+        Task<ServiceResponse<UpdateFeatureResponseDto>> UpdateFeatureAsync(UpdateFeatureRequestDto featureRequestDto, Guid projectId, Guid featureId);
 
-        Task<ApiResponse<FeatureResponseDto>> DeleteFeatureAsync(Guid projectId, Guid featureId);
+        Task<ServiceResponse<FeatureResponseDto>> DeleteFeatureAsync(Guid projectId, Guid featureId);
     }
 }

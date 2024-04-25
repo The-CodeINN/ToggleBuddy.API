@@ -1,4 +1,5 @@
 ﻿using System.Security.Claims;
+using ToggleBuddy.API.Middlewares;
 
 namespace ToggleBuddy.API.Helpers
 {
@@ -11,5 +12,8 @@ namespace ToggleBuddy.API.Helpers
                 throw new Exception("Session expired. Please logout and login again");
             return userId;
         }
+
+        public static void UseCustomExceptionHandler(this IApplicationBuilder app) =>
+            app.UseMiddleware<ExceptionHandlingMiddleware>();
     }
 }
