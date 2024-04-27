@@ -7,7 +7,7 @@ namespace ToggleBuddy.API.Repositories.Interfaces
         Task<FeatureEnvironment> CreateFeatureEnvironmentAsync(Guid featureId, FeatureEnvironment featureEnvironment);
         Task<List<FeatureEnvironment>> GetAllFeatureEnvironmentsAsync(Guid featureId);
         Task<FeatureEnvironment?> UpdateFeatureEnvironmentStatusAsync(Guid featureId, Guid featureEnvironmentId, FeatureEnvironment featureEnvironment);
-        Task<FeatureEnvironment?> DeleteFeatureEnvironmentAsync(Guid featureEnvironmentId);
+        Task<FeatureEnvironment?> DeleteFeatureEnvironmentAsync(Guid featureId, Guid featureEnvironmentId);
 
         // filters single FeatureEnvironment
         Task<FeatureEnvironment?> GetFeatureEnvironmentByIdForCurrentFeatureAsync(Guid featureEnvironmentId, Guid featureId);

@@ -18,6 +18,6 @@ namespace ToggleBuddy.API.Services.FeatureEnvironmentServices
 
         Task<ServiceResponse<FeatureEnvironmentResponseDto>> UpdateFeatureEnvironmentAsync(Guid featureId, Guid featureEnvironmentId, FeatureEnvironmentRequestDto FeatureEnvironmentRequestDto);
 
-        Task<ServiceResponse<FeatureEnvironmentResponseDto>> DeleteFeatureEnvironment(Guid featureId, Guid featureEnvironmentId);
+        Task<ServiceResponse<FeatureEnvironmentResponseDto>> DeleteFeatureEnvironmentAsync(Guid featureId, Guid featureEnvironmentId);
     }
 }

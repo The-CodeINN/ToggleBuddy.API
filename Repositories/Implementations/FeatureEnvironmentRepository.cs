@@ -41,15 +41,15 @@ namespace ToggleBuddy.API.Repositories.Implementations
 
             //insert implementation for checking if feature is enabled or disabled
             existingFeatureEnvironment.IsEnabled = featureEnvironment.IsEnabled;
-            existingFeatureEnvironment.UpdatedAt = featureEnvironment.UpdatedAt;
+            existingFeatureEnvironment.UpdatedAt = DateTime.UtcNow;
 
             await _dbContext.SaveChangesAsync();
             return existingFeatureEnvironment;
         }
 
-        public async Task<FeatureEnvironment?> DeleteFeatureEnvironmentAsync(Guid featureEnvironmentId)
+        public async Task<FeatureEnvironment?> DeleteFeatureEnvironmentAsync(Guid featureId, Guid featureEnvironmentId)
         {
-            var existingFeatureEnvironment = await _dbContext.FeatureEnvironments.FirstOrDefaultAsync(e => e.Id == featureEnvironmentId);
+            var existingFeatureEnvironment = await _dbContext.FeatureEnvironments.FirstOrDefaultAsync(e => e.Id == featureId && e.Id == featureEnvironmentId);
             if (existingFeatureEnvironment == null)
             {
                 return null;

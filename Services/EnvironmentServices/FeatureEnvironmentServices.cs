@@ -58,19 +58,28 @@ namespace ToggleBuddy.API.Services.FeatureEnvironmentServices
             return new ServiceResponse<FeatureEnvironmentResponseDto> { Result = featureEnvironmentResponseDto, Message = "Feature environment retrieved successfully", Status = ResponseStatus.Success };
         }
         
-        public async Task<ServiceResponse<FeatureEnvironmentResponseDto>> UpdateFeatureEnvironmentAsync(Guid featureId, Guid id, FeatureEnvironmentRequestDto featureEnvironmentRequestDto)
+        public async Task<ServiceResponse<FeatureEnvironmentResponseDto>> UpdateFeatureEnvironmentAsync(Guid featureId, Guid featureEnvironmentId, FeatureEnvironmentRequestDto featureEnvironmentRequestDto)
         {
             // ... implementation ...
+            var featureEnvironment = await _featureEnvironmentRepository.GetFeatureEnvironmentByIdForCurrentFeatureAsync(featureEnvironmentId, featureId);
+            if (featureEnvironment == null)
+                return new ServiceResponse<FeatureEnvironmentResponseDto> { Message = "Feature environment not found", Status = ResponseStatus.NotFound };
+
             var featureEnvironmentModel = _mapper.Map<FeatureEnvironment>(featureEnvironmentRequestDto);
             featureEnvironmentModel.FeatureId = featureId;
-            featureEnvironmentModel.Id = id;
-            throw new NotImplementedException();
+            featureEnvironmentModel.Id = featureEnvironmentId;
+            return new ServiceResponse<FeatureEnvironmentResponseDto> { Result = _mapper.Map<FeatureEnvironmentResponseDto>(featureEnvironmentModel), Message = "Feature environment updated successfully", Status = ResponseStatus.Success };
         }
 
         
-        public async Task<ServiceResponse<FeatureEnvironmentResponseDto>> DeleteFeatureEnvironment(Guid featureId, Guid featureEnvironmentId)
+        public async Task<ServiceResponse<FeatureEnvironmentResponseDto>> DeleteFeatureEnvironmentAsync(Guid featureId, Guid featureEnvironmentId)
         {
             // ... implementation ...
+            var featureEnvironment = await _featureEnvironmentRepository.GetFeatureEnvironmentByIdForCurrentFeatureAsync(featureEnvironmentId, featureId);
+            if (featureEnvironment == null)
+                return new ServiceResponse<FeatureEnvironmentResponseDto> { Message = "Feature environment not found", Status = ResponseStatus.NotFound };
+
+            await _featureEnvironmentRepository.DeleteFeatureEnvironmentAsync(featureId, featureEnvironmentId);
             throw new NotImplementedException();
         }
     }
