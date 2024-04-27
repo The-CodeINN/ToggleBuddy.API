@@ -15,7 +15,7 @@ namespace ToggleBuddy.API.Repositories.Implementations
             _dbContext = dbContext;
         }
 
-        public async Task<FeatureEnvironment> CreateFeatureEnvironmentAsync(Guid featureId, FeatureEnvironment featureEnvironment)
+        public async Task<FeatureEnvironment> CreateFeatureEnvironmentAsync(FeatureEnvironment featureEnvironment, Guid featureId)
         {
             featureEnvironment.FeatureId = featureId;
             await _dbContext.FeatureEnvironments.AddAsync(featureEnvironment);

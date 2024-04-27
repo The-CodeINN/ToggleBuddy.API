@@ -6,27 +6,26 @@ using ToggleBuddy.API.Services.FeatureEnvironmentServices;
 
 namespace ToggleBuddy.API.Controllers
 {
-    [Route("api/feature/{featureId:Guid}/environments")]
+    [Route("api/{featureId:Guid}/Environment")]
     [ApiController]
     public class FeatureEnvironmentController : ControllerBase
     {
         private readonly IFeatureEnvironmentServices _featureEnvironmentServices;
 
-
-        public FeatureEnvironmentController(
-            IFeatureEnvironmentServices featureEnvironmentServices
-        )
+        // constructor
+        public FeatureEnvironmentController(IFeatureEnvironmentServices featureEnvironmentServices)
         {
             _featureEnvironmentServices = featureEnvironmentServices;
         }
 
         [HttpPost]
         [Authorize]
-        public async Task<IActionResult> CreateFeatureEnvironmentAsync([FromRoute]Guid featureId, [FromBody] FeatureEnvironmentRequestDto featureEnvironmentRequestDto)
+        // creates a new feature environment for a given feature
+        public async Task<IActionResult> CreateFeatureEnvironment([FromRoute]Guid featureId, [FromBody] FeatureEnvironmentRequestDto featureEnvironmentRequestDto)
         {
-            var response = await _featureEnvironmentServices.CreateFeatureEnvironmentAsync(featureId, featureEnvironmentRequestDto);
+            var response = await _featureEnvironmentServices.CreateFeatureEnvironmentAsync(featureEnvironmentRequestDto, featureId);
             if (response.Status == ResponseStatus.Success && response.Result != null){
-                return CreatedAtAction(nameof(GetFeatureEnvironmentByIdAsync), new { featureId, id = response.Result.Id }, response);
+                return CreatedAtAction(nameof(GetFeatureEnvironmentById), new { featureId = featureId, id = response.Result.Id }, response);
             } else {
                 return Utilities.HandleApiResponse(response);
             }
@@ -34,7 +33,8 @@ namespace ToggleBuddy.API.Controllers
 
         [HttpGet]
         [Authorize]
-        public async Task<IActionResult> ShowAllFeatureEnvironmentsAsync([FromRoute]Guid featureId)
+        // returns all feature environments for a given feature
+        public async Task<IActionResult> ShowAllFeatureEnvironments([FromRoute]Guid featureId)
         {
             var response = await _featureEnvironmentServices.ShowAllFeatureEnvironmentsAsync(featureId);
             return Utilities.HandleApiResponse(response);
@@ -43,7 +43,8 @@ namespace ToggleBuddy.API.Controllers
         [HttpGet]
         [Route("{id:Guid}")]
         [Authorize]
-        public async Task<IActionResult> GetFeatureEnvironmentByIdAsync([FromRoute]Guid featureId, [FromRoute]Guid id)
+        // returns a single feature environment for a given feature
+        public async Task<IActionResult> GetFeatureEnvironmentById([FromRoute]Guid featureId, [FromRoute]Guid id)
         {
             var response = await _featureEnvironmentServices.GetFeatureEnvironmentByIdAsync(featureId, id);
             return Utilities.HandleApiResponse(response);
@@ -52,7 +53,8 @@ namespace ToggleBuddy.API.Controllers
         [HttpPut]
         [Route("{id:Guid}")]
         [Authorize]
-        public async Task<IActionResult> UpdateFeatureEnvironmentAsync([FromRoute]Guid featureId, [FromRoute]Guid id, [FromBody] FeatureEnvironmentRequestDto featureEnvironmentRequestDto)
+        // updates a single feature environment for a given feature
+        public async Task<IActionResult> UpdateFeatureEnvironment([FromRoute]Guid featureId, [FromRoute]Guid id, [FromBody] FeatureEnvironmentRequestDto featureEnvironmentRequestDto)
         {
             var response = await _featureEnvironmentServices.UpdateFeatureEnvironmentAsync(featureId, id, featureEnvironmentRequestDto);
             return Utilities.HandleApiResponse(response);
@@ -61,6 +63,7 @@ namespace ToggleBuddy.API.Controllers
         [HttpDelete]
         [Route("{id:Guid}")]
         [Authorize]
+        // deletes a single feature environment for a given feature
         public async Task<IActionResult> DeleteFeatureEnvironment([FromRoute]Guid featureId, [FromRoute]Guid id)
         {
             var response = await _featureEnvironmentServices.DeleteFeatureEnvironmentAsync(featureId, id);

@@ -10,7 +10,7 @@ namespace ToggleBuddy.API.Services.FeatureEnvironmentServices
 {
     public interface IFeatureEnvironmentServices
     {
-        Task<ServiceResponse<FeatureEnvironmentResponseDto>> CreateFeatureEnvironmentAsync(Guid featureId, FeatureEnvironmentRequestDto featureEnvironmentRequestDto);
+        Task<ServiceResponse<FeatureEnvironmentResponseDto>> CreateFeatureEnvironmentAsync(FeatureEnvironmentRequestDto featureEnvironmentRequestDto, Guid featureId);
 
         Task<ServiceResponse<List<FeatureEnvironmentResponseDto>>> ShowAllFeatureEnvironmentsAsync(Guid featureId);
 

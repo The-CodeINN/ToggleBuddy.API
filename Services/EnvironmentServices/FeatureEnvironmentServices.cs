@@ -25,12 +25,12 @@ namespace ToggleBuddy.API.Services.FeatureEnvironmentServices
             _featureEnvironmentRepository = featureEnvironmentRepository;
         }
 
-        public async Task<ServiceResponse<FeatureEnvironmentResponseDto>> CreateFeatureEnvironmentAsync(Guid featureId, FeatureEnvironmentRequestDto featureEnvironmentRequestDto)
+        public async Task<ServiceResponse<FeatureEnvironmentResponseDto>> CreateFeatureEnvironmentAsync(FeatureEnvironmentRequestDto featureEnvironmentRequestDto, Guid featureId)
         {  
             var featureEnvironmentModel = _mapper.Map<FeatureEnvironment>(featureEnvironmentRequestDto);
             featureEnvironmentModel.FeatureId = featureId;
  
-            var newEnvironment = await _featureEnvironmentRepository.CreateFeatureEnvironmentAsync(featureId, featureEnvironmentModel);
+            var newEnvironment = await _featureEnvironmentRepository.CreateFeatureEnvironmentAsync(featureEnvironmentModel, featureId);
             var featureEnvironmentResponseDto = _mapper.Map<FeatureEnvironmentResponseDto>(newEnvironment);
             return new ServiceResponse<FeatureEnvironmentResponseDto> { Result = featureEnvironmentResponseDto, Message = "Feature environment created successfully", Status = ResponseStatus.Success };
         }
