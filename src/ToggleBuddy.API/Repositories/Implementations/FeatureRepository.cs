@@ -1,10 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using ToggleBuddy.API.Data;
-using ToggleBuddy.API.Models.Domain;
 using ToggleBuddy.API.Repositories.Interfaces;
 
 namespace ToggleBuddy.API.Repositories.Implementations
