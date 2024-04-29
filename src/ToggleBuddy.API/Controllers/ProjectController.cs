@@ -1,4 +1,4 @@
-﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using ToggleBuddy.API.Helpers;
 using ToggleBuddy.API.Models.DTOs.RequestDTOs;

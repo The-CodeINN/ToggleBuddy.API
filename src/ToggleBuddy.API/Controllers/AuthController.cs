@@ -14,6 +14,7 @@ namespace ToggleBuddy.API.Controllers
         public AuthController(IAuthService authService)
         {
             _authService = authService;
+            
         }
 
         [HttpPost("Register")]
