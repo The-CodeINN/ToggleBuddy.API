@@ -50,7 +50,7 @@ namespace ToggleBuddy.API.Controllers
             return Utilities.HandleApiResponse(response);
         }
 
-        [HttpPut]
+        [HttpPatch]
         [Route("{id:Guid}")]
         [Authorize]
         // updates a single feature environment for a given feature

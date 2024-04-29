@@ -31,12 +31,12 @@ namespace ToggleBuddy.API.Repositories.Implementations
                 .ToListAsync();
         }
 
-        public async Task<FeatureEnvironment?> UpdateFeatureEnvironmentStatusAsync(Guid featureId, Guid featureEnvironmentId, FeatureEnvironment featureEnvironment)
+        public async Task<FeatureEnvironment> UpdateFeatureEnvironmentStatusAsync(Guid featureId, Guid featureEnvironmentId, FeatureEnvironment featureEnvironment)
         {
             var existingFeatureEnvironment = await _dbContext.FeatureEnvironments.FirstOrDefaultAsync(e => e.Id == featureId && e.Id == featureEnvironmentId);
             if (existingFeatureEnvironment == null)
             {
-                return null;
+                throw new KeyNotFoundException("Environment not found.");
             }
 
             //insert implementation for checking if feature is enabled or disabled
