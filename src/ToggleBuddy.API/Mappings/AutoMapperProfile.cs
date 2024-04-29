@@ -17,6 +17,8 @@ namespace ToggleBuddy.API.Mappings
             CreateMap<Feature, FeatureResponseDto>().ReverseMap();
             CreateMap<Feature, UpdateFeatureResponseDto>().ReverseMap();
             CreateMap<Feature, UpdateFeatureRequestDto>().ReverseMap();
+            CreateMap<FeatureEnvironment, FeatureEnvironmentRequestDto>().ReverseMap();
+            CreateMap<FeatureEnvironment, FeatureEnvironmentResponseDto>().ReverseMap();
         }
     }
 }

@@ -23,5 +23,6 @@ namespace ToggleBuddy.API.Data
         public new DbSet<User> Users { get; set; }
         public DbSet<Project> Projects { get; set; }
         public DbSet<Feature> Features { get; set; }
+        public DbSet<FeatureEnvironment> FeatureEnvironments { get; set; }
     }
 }

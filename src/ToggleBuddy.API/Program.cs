@@ -11,6 +11,7 @@ using ToggleBuddy.API.Models.Domain;
 using ToggleBuddy.API.Repositories.Implementations;
 using ToggleBuddy.API.Repositories.Interfaces;
 using ToggleBuddy.API.Services.AuthServices;
+using ToggleBuddy.API.Services.FeatureEnvironmentServices;
 using ToggleBuddy.API.Services.FeatureServices;
 using ToggleBuddy.API.Services.ProjectServices;
 
@@ -38,11 +39,13 @@ namespace ToggleBuddy.API
             builder.Services.AddScoped<IUser, UserRepository>();
             builder.Services.AddScoped<IProjectRepository, ProjectRepository>();
             builder.Services.AddScoped<IFeatureRepository, FeatureRepository>();
+            builder.Services.AddScoped<IFeatureEnvironmentRepository, FeatureEnvironmentRepository>();
 
             // adding services
             builder.Services.AddScoped<IProjectService, ProjectService>();
             builder.Services.AddScoped<IAuthService, AuthService>();
             builder.Services.AddScoped<IFeatureServices, FeatureServices>();
+            builder.Services.AddScoped<IFeatureEnvironmentServices, FeatureEnvironmentServices>();
 
             // Configure ASP.NET Core Identity services
             builder.Services.AddIdentity<User, IdentityRole>()

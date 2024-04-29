@@ -12,7 +12,7 @@ using ToggleBuddy.API.Data;
 namespace ToggleBuddy.API.Migrations
 {
     [DbContext(typeof(ToggleBuddyDbContext))]
-    [Migration("20240429100346_MergeMigration")]
+    [Migration("20240429101616_MergeMigration")]
     partial class MergeMigration
     {
         /// <inheritdoc />
@@ -263,6 +263,39 @@ namespace ToggleBuddy.API.Migrations
                     b.ToTable("AspNetUserTokens", (string)null);
                 });
 
+            modelBuilder.Entity("ToggleBuddy.API.Models.Domain.FeatureEnvironment", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Description")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<Guid>("FeatureId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<bool>("IsEnabled")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("UpdatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("FeatureId");
+
+                    b.ToTable("FeatureEnvironments");
+                });
+
             modelBuilder.Entity("ToggleBuddy.API.Models.Domain.Project", b =>
                 {
                     b.Property<Guid>("Id")
@@ -379,6 +412,15 @@ namespace ToggleBuddy.API.Migrations
                         .IsRequired();
                 });
 
+            modelBuilder.Entity("ToggleBuddy.API.Models.Domain.FeatureEnvironment", b =>
+                {
+                    b.HasOne("Feature", null)
+                        .WithMany("FeatureEnvironment")
+                        .HasForeignKey("FeatureId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
             modelBuilder.Entity("ToggleBuddy.API.Models.Domain.Project", b =>
                 {
                     b.HasOne("ToggleBuddy.API.Models.Domain.User", null)
@@ -386,6 +428,11 @@ namespace ToggleBuddy.API.Migrations
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+                });
+
+            modelBuilder.Entity("Feature", b =>
+                {
+                    b.Navigation("FeatureEnvironment");
                 });
 
             modelBuilder.Entity("ToggleBuddy.API.Models.Domain.Project", b =>
