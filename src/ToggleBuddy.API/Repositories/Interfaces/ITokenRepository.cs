@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using ToggleBuddy.API.Models.Domain;
 
-namespace ToggleBuddy.API.Respositories.Interfaces
+namespace ToggleBuddy.API.Repositories.Interfaces
 {
     public interface ITokenRepository
     {

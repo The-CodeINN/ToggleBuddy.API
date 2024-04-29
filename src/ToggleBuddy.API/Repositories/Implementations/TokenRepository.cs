@@ -4,9 +4,9 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
 using ToggleBuddy.API.Models.Domain;
-using ToggleBuddy.API.Respositories.Interfaces;
+using ToggleBuddy.API.Repositories.Interfaces;
 
-namespace ToggleBuddy.API.Respositories.Implementations
+namespace ToggleBuddy.API.Repositories.Implementations
 {
     public class TokenRepository : ITokenRepository
     {
@@ -25,7 +25,7 @@ namespace ToggleBuddy.API.Respositories.Implementations
                 new Claim(ClaimTypes.Name, user.FirstName + " " + user.LastName),
             };
 
-            var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["Jwt:Key"]));
+            var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["Jwt:Key"] ?? string.Empty));
             var credentials = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
             var expires = DateTime.UtcNow.AddMinutes(Convert.ToDouble(_configuration["Jwt:ExpireMinutes"]));
 
@@ -33,7 +33,7 @@ namespace ToggleBuddy.API.Respositories.Implementations
                 _configuration["Jwt:Issuer"],
                 _configuration["Jwt:Audience"],
                 claims,
-                expires: expires,
+                expires: DateTime.UtcNow.AddMinutes(30),
                 signingCredentials: credentials
             );
 
