@@ -50,7 +50,7 @@ namespace ToggleBuddy.API.Services.ProjectServices
         {
             var currentUserId = claimsPrincipal.GetLoggedInUserId();
 
-            var project = await _projectRepository.GetProjectByIdAsync(id, currentUserId);
+            var project = await _projectRepository.GetProjectByIdForAUserAsync(id, currentUserId);
             if (project == null)
                 return new ServiceResponse<ProjectResponseDto> { Message = "Project not found or you are not authorized to access it", Status = ResponseStatus.NotFound };
 

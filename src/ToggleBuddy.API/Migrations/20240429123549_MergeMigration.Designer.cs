@@ -12,7 +12,7 @@ using ToggleBuddy.API.Data;
 namespace ToggleBuddy.API.Migrations
 {
     [DbContext(typeof(ToggleBuddyDbContext))]
-    [Migration("20240429111044_MergeMigration")]
+    [Migration("20240429123549_MergeMigration")]
     partial class MergeMigration
     {
         /// <inheritdoc />

@@ -12,6 +12,7 @@ namespace ToggleBuddy.API.Helpers
                 ResponseStatus.Success => new OkObjectResult(response),
                 ResponseStatus.Error => new BadRequestObjectResult(response),
                 ResponseStatus.NotFound => new NotFoundObjectResult(response),
+                ResponseStatus.Unauthorized => new UnauthorizedObjectResult(response),
                 _ => new StatusCodeResult(500)
             };
         }

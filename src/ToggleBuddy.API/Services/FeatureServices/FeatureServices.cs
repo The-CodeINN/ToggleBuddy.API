@@ -1,10 +1,8 @@
-using System;
 using AutoMapper;
+using Microsoft.AspNetCore.Mvc;
 using ToggleBuddy.API.Helpers;
-using ToggleBuddy.API.Models.Domain;
 using ToggleBuddy.API.Models.DTOs.RequestDTOs;
 using ToggleBuddy.API.Models.DTOs.ResponseDTOs;
-using System.Security.Claims;
 using ToggleBuddy.API.Repositories.Interfaces;
 
 namespace ToggleBuddy.API.Services.FeatureServices
@@ -13,18 +11,37 @@ namespace ToggleBuddy.API.Services.FeatureServices
     {
         private readonly IMapper _mapper;
         private readonly IFeatureRepository _featureRepository;
+        private readonly IHttpContextAccessor _httpContextAccessor; 
+        private readonly IProjectRepository _projectRepository;
 
         public FeatureServices(
                 IMapper mapper,
-                IFeatureRepository featureRepository
+                IFeatureRepository featureRepository,
+                IProjectRepository projectRepository,
+                IHttpContextAccessor httpContextAccessor
                )
         {
             _mapper = mapper;
             _featureRepository = featureRepository;
+            _httpContextAccessor = httpContextAccessor;
+            _projectRepository = projectRepository;
         }
+
 
         public async Task<ServiceResponse<FeatureResponseDto>> CreateFeatureAsync(FeatureRequestDto featureRequestDto, Guid projectId)
         {
+           var userId = _httpContextAccessor?.HttpContext?.User.GetLoggedInUserId();
+
+            var project = await _projectRepository.GetProjectByIdAsync(projectId);
+
+            // check if project exists
+            if (project == null)
+                return new ServiceResponse<FeatureResponseDto> { Message = "Invalid project or not found", Status = ResponseStatus.NotFound };
+
+            // check if user is the owner of the project
+            if (project.UserId != userId)
+                return new ServiceResponse<FeatureResponseDto> { Message = "You are not authorized to create a feature for this project", Status = ResponseStatus.Unauthorized };
+            
             var featureModel = _mapper.Map<Feature>(featureRequestDto);
             featureModel.ProjectId = projectId;
 
@@ -37,6 +54,16 @@ namespace ToggleBuddy.API.Services.FeatureServices
 
         public async Task<ServiceResponse<FeatureResponseDto>> DeleteFeatureAsync(Guid projectId, Guid featureId)
         {
+            var userId = _httpContextAccessor?.HttpContext?.User.GetLoggedInUserId();
+
+            var project = await _projectRepository.GetProjectByIdAsync(projectId);
+
+            if (project == null)
+                return new ServiceResponse<FeatureResponseDto> { Message = "Invalid project or not found", Status = ResponseStatus.NotFound };
+
+            if (project.UserId != userId)
+                return new ServiceResponse<FeatureResponseDto> { Message = "You are not authorized to delete a feature for this project", Status = ResponseStatus.Unauthorized };
+
             var feature = await _featureRepository.DeleteAsync(projectId, featureId);
 
             if (feature == null)
@@ -47,6 +74,16 @@ namespace ToggleBuddy.API.Services.FeatureServices
 
         public async Task<ServiceResponse<FeatureResponseDto>> GetFeatureDetailsByProjectIdAsync(Guid projectId, Guid featureId)
         {
+            var userId = _httpContextAccessor?.HttpContext?.User.GetLoggedInUserId();
+
+            var project = await _projectRepository.GetProjectByIdAsync(projectId);
+
+            if (project == null)
+                return new ServiceResponse<FeatureResponseDto> { Message = "Invalid project or not found", Status = ResponseStatus.NotFound };
+
+            if (project.UserId != userId)
+                return new ServiceResponse<FeatureResponseDto> { Message = "You are not authorized to view a feature for this project", Status = ResponseStatus.Unauthorized };
+
             var feature = await _featureRepository.ShowAsync(projectId, featureId);
 
             if (feature == null)
@@ -57,6 +94,15 @@ namespace ToggleBuddy.API.Services.FeatureServices
 
         public async Task<ServiceResponse<List<FeatureResponseDto>>> GetFeaturesByProjectIdAsync(Guid projectId)
         {
+            var userId = _httpContextAccessor?.HttpContext?.User.GetLoggedInUserId();
+
+            var project = await _projectRepository.GetProjectByIdAsync(projectId);
+            if (project == null)
+                return new ServiceResponse<List<FeatureResponseDto>> { Message = "Invalid project or not found", Status = ResponseStatus.NotFound };
+
+            if (project.UserId != userId)
+                return new ServiceResponse<List<FeatureResponseDto>> { Message = "You are not authorized to view features for this project", Status = ResponseStatus.Unauthorized };
+
             var features = await _featureRepository.GetAllAsync(projectId);
 
             if (features == null)
@@ -71,6 +117,15 @@ namespace ToggleBuddy.API.Services.FeatureServices
 
         public async Task<ServiceResponse<UpdateFeatureResponseDto>> UpdateFeatureAsync(UpdateFeatureRequestDto featureRequestDto, Guid projectId, Guid featureId)
         {
+            var userId = _httpContextAccessor?.HttpContext?.User.GetLoggedInUserId();
+
+            var project = await _projectRepository.GetProjectByIdAsync(projectId);
+            if (project == null)
+                return new ServiceResponse<UpdateFeatureResponseDto> { Message = "Invalid project or not found", Status = ResponseStatus.NotFound };
+
+            if (project.UserId != userId)
+                return new ServiceResponse<UpdateFeatureResponseDto> { Message = "You are not authorized to update a feature for this project", Status = ResponseStatus.Unauthorized };
+
             var featureModel = _mapper.Map<Feature>(featureRequestDto);
 
             var updatedFeature = await _featureRepository.UpdateAsync(featureModel, projectId, featureId);

@@ -34,10 +34,15 @@ namespace ToggleBuddy.API.Repositories.Implementations
         }
 
 
-        public async Task<Project?> GetProjectByIdAsync(Guid id, string userId)
+        public async Task<Project?> GetProjectByIdForAUserAsync(Guid id, string userId)
         {
             var project = await _dbContext.Projects.FindAsync([id]);
             return project?.UserId == userId ? project : null;
+        }
+
+        public async Task<Project?> GetProjectByIdAsync(Guid id)
+        {
+            return await _dbContext.Projects.FindAsync([id]);
         }
 
         public async Task<List<Project>> GetProjectsAsync(string userId)
