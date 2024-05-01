@@ -1,0 +1,46 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.9.34701.34
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{D30E6EB5-8C75-403A-9E84-0DF02C110F3B}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ToggleBuddy.Test", "src\ToggleBuddy.Test\ToggleBuddy.Test.csproj", "{2F605093-3250-4203-BAE9-A9C6CF43EA2A}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ToggleBuddy.API", "src\ToggleBuddy.API\ToggleBuddy.API.csproj", "{BD8EBA74-F1AE-4443-A856-81F6F39BA3CC}"
+EndProject
+Project("{54A90642-561A-4BB1-A94E-469ADEE60C69}") = "togglebuddy.web", "src\ToggleBuddy.Web\togglebuddy.web.esproj", "{A66C7AAE-687C-4433-8B55-0A25577CCECF}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{2F605093-3250-4203-BAE9-A9C6CF43EA2A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2F605093-3250-4203-BAE9-A9C6CF43EA2A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2F605093-3250-4203-BAE9-A9C6CF43EA2A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2F605093-3250-4203-BAE9-A9C6CF43EA2A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{BD8EBA74-F1AE-4443-A856-81F6F39BA3CC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{BD8EBA74-F1AE-4443-A856-81F6F39BA3CC}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{BD8EBA74-F1AE-4443-A856-81F6F39BA3CC}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{BD8EBA74-F1AE-4443-A856-81F6F39BA3CC}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A66C7AAE-687C-4433-8B55-0A25577CCECF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A66C7AAE-687C-4433-8B55-0A25577CCECF}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A66C7AAE-687C-4433-8B55-0A25577CCECF}.Debug|Any CPU.Deploy.0 = Debug|Any CPU
+		{A66C7AAE-687C-4433-8B55-0A25577CCECF}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A66C7AAE-687C-4433-8B55-0A25577CCECF}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A66C7AAE-687C-4433-8B55-0A25577CCECF}.Release|Any CPU.Deploy.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{2F605093-3250-4203-BAE9-A9C6CF43EA2A} = {D30E6EB5-8C75-403A-9E84-0DF02C110F3B}
+		{BD8EBA74-F1AE-4443-A856-81F6F39BA3CC} = {D30E6EB5-8C75-403A-9E84-0DF02C110F3B}
+		{A66C7AAE-687C-4433-8B55-0A25577CCECF} = {D30E6EB5-8C75-403A-9E84-0DF02C110F3B}
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {7CA33BB9-4872-4590-B988-F9225A30535A}
+	EndGlobalSection
+EndGlobal
