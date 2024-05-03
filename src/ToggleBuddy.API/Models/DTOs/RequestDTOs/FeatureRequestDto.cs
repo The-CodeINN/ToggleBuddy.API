@@ -8,8 +8,5 @@ namespace ToggleBuddy.API.Models.DTOs.RequestDTOs
         public string Name { get; set; }
         [Required]
         public string Description { get; set; }
-
-        [Required]
-        public DateTime ExpirationDate { get; set; }
     }
 }

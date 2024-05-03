@@ -21,14 +21,14 @@ namespace ToggleBuddy.API.Repositories.Implementations
             return feature;
         }
 
-        public async Task<Feature?> ShowAsync(Guid projectId, Guid featureId)
+        public async Task<Feature> ShowAsync(Guid projectId, Guid featureId)
         {
             return await _dbContext.Features
                 .Where(f => f.Id == featureId && f.ProjectId == projectId)
                 .FirstOrDefaultAsync();
         }
 
-        public async Task<Feature?> UpdateAsync(Feature feature, Guid projectId, Guid featureId)
+        public async Task<Feature> UpdateAsync(Feature feature, Guid projectId, Guid featureId)
         {
             var existingFeature = await _dbContext.Features
                 .FirstOrDefaultAsync(f => f.Id == featureId && f.ProjectId == projectId);
@@ -41,7 +41,6 @@ namespace ToggleBuddy.API.Repositories.Implementations
             // Update properties
             existingFeature.Name = feature.Name;
             existingFeature.Description = feature.Description;
-            existingFeature.ExpirationDate = feature.ExpirationDate;
             existingFeature.UpdatedAt = DateTime.UtcNow;
 
             await _dbContext.SaveChangesAsync();
@@ -55,14 +54,14 @@ namespace ToggleBuddy.API.Repositories.Implementations
                 .ToListAsync();
         }
 
-        public async Task<Feature?> DeleteAsync(Guid projectId, Guid featureId)
+        public async Task<Feature> DeleteAsync(Guid projectId, Guid featureId)
         {
             var featureToDelete = await _dbContext.Features
                 .FirstOrDefaultAsync(f => f.Id == featureId && f.ProjectId == projectId);
 
             if (featureToDelete == null)
             {
-                return null;
+               throw new KeyNotFoundException("Feature not found.");
             }
 
             _dbContext.Features.Remove(featureToDelete);
