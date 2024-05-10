@@ -11,5 +11,8 @@ namespace ToggleBuddy.API.Models.DTOs.RequestDTOs
 
         [Required]
         public DateTime? ExpirationDate { get; set; }
+        
+        [Required]
+         public Guid FeatureId { get; set; }
     }
 }

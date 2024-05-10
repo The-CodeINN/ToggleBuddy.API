@@ -40,6 +40,32 @@ namespace ToggleBuddy.API.Repositories.Implementations
             return project?.UserId == userId ? project : null;
         }
 
+        // new added
+        public async Task<Project> GetWithFeaturesAsync(Guid id)
+            {
+                return await _dbContext.Projects
+                    .Include(p => p.Features)
+                    .FirstOrDefaultAsync(p => p.Id == id);
+            }
+
+        //
+        public async Task<Project> UpdateWithFeaturesAsync(Project project,Guid id)
+        {
+            var existing = await _dbContext.Projects
+                           .Include(p => p.Features)
+                           .FirstOrDefaultAsync(p => p.Id ==id);
+                    
+              if (existing == null)
+                return null;
+
+            existing.Name = project.Name;
+            existing.Description = project.Description;
+
+            await _dbContext.SaveChangesAsync();
+            return existing;
+
+        }
+
         public async Task<Project?> GetProjectByIdAsync(Guid id)
         {
             return await _dbContext.Projects.FindAsync([id]);

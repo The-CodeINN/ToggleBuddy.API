@@ -10,5 +10,11 @@ namespace ToggleBuddy.API.Repositories.Interfaces
         Task<Project?> DeleteProjectAsync(Guid id, string userId);
         Task<Project?> GetProjectByIdForAUserAsync(Guid id, string userId);
         Task<Project?> GetProjectByIdAsync(Guid id);
+         
+         //new added
+         Task<Project?> GetWithFeaturesAsync(Guid id);
+         Task<Project?> UpdateWithFeaturesAsync(Project project, Guid id);
+
+        
     }
 }

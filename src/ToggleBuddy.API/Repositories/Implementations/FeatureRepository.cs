@@ -13,25 +13,34 @@ namespace ToggleBuddy.API.Repositories.Implementations
             _dbContext = dbContext;
         }
 
-        public async Task<Feature> CreateAsync(Feature feature, Guid projectId)
+        public async Task<Feature> CreateAsync(Feature feature)
         {
-            feature.ProjectId = projectId; // Ensure the feature is linked to the correct project
+            // feature.ProjectId = projectId; // Ensure the feature is linked to the correct project
             await _dbContext.Features.AddAsync(feature);
             await _dbContext.SaveChangesAsync();
             return feature;
         }
 
-        public async Task<Feature> ShowAsync(Guid projectId, Guid featureId)
+        public async Task<Feature> ShowAsync(Guid featureId)
         {
-            return await _dbContext.Features
-                .Where(f => f.Id == featureId && f.ProjectId == projectId)
-                .FirstOrDefaultAsync();
+            var feature = await _dbContext.Features.FirstOrDefaultAsync(f=>f.Id==featureId);
+            if (feature == null)
+            {
+                throw new ArgumentException("feature not found");
+            }
+            // Check if the feature belongs to a project by verifying that ProjectId is not empty
+            if (feature.ProjectId == Guid.Empty)
+            {
+                throw new ArgumentException("feature id found"); // The feature does not belong to any project
+            }
+
+            return feature;
         }
 
-        public async Task<Feature> UpdateAsync(Feature feature, Guid projectId, Guid featureId)
+        public async Task<Feature> UpdateAsync(Feature feature, Guid featureId)
         {
             var existingFeature = await _dbContext.Features
-                .FirstOrDefaultAsync(f => f.Id == featureId && f.ProjectId == projectId);
+                .FirstOrDefaultAsync(f => f.Id == featureId);
 
             if (existingFeature == null)
             {
@@ -45,6 +54,14 @@ namespace ToggleBuddy.API.Repositories.Implementations
 
             await _dbContext.SaveChangesAsync();
             return existingFeature;
+        }
+
+        //
+        public async Task<Feature> UpdateFeatureAsync(Feature featureToUpdate)
+        {
+            _dbContext.Features.Update(featureToUpdate);
+            await _dbContext.SaveChangesAsync();
+            return featureToUpdate;
         }
 
         public async Task<ICollection<Feature>> GetAllAsync(Guid projectId)
@@ -68,5 +85,8 @@ namespace ToggleBuddy.API.Repositories.Implementations
             await _dbContext.SaveChangesAsync();
             return featureToDelete;
         }
+
+        
+       
     }
 }

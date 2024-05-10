@@ -1,4 +1,5 @@
 using AutoMapper;
+using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 using ToggleBuddy.API.Helpers;
 using ToggleBuddy.API.Models.DTOs.RequestDTOs;
@@ -28,24 +29,23 @@ namespace ToggleBuddy.API.Services.FeatureServices
         }
 
 
-        public async Task<ServiceResponse<FeatureResponseDto>> CreateFeatureAsync(FeatureRequestDto featureRequestDto, Guid projectId)
+        public async Task<ServiceResponse<FeatureResponseDto>> CreateFeatureAsync(FeatureRequestDto featureRequestDto)
         {
            var userId = _httpContextAccessor?.HttpContext?.User.GetLoggedInUserId();
 
-            var project = await _projectRepository.GetProjectByIdAsync(projectId);
+            //var project = await _projectRepository.GetProjectByIdAsync(projectId);
 
             // check if project exists
-            if (project == null)
-                return new ServiceResponse<FeatureResponseDto> { Message = "Invalid project or not found", Status = ResponseStatus.NotFound };
+            //if (project == null)
+              //  return new ServiceResponse<FeatureResponseDto> { Message = "Invalid project or not found", Status = ResponseStatus.NotFound };
 
             // check if user is the owner of the project
-            if (project.UserId != userId)
-                return new ServiceResponse<FeatureResponseDto> { Message = "You are not authorized to create a feature for this project", Status = ResponseStatus.Unauthorized };
+            //if (project.UserId != userId)
+              //  return new ServiceResponse<FeatureResponseDto> { Message = "You are not authorized to create a feature for this project", Status = ResponseStatus.Unauthorized };
             
             var featureModel = _mapper.Map<Feature>(featureRequestDto);
-            featureModel.ProjectId = projectId;
 
-            var createdFeature = await _featureRepository.CreateAsync(featureModel, projectId);
+            var createdFeature = await _featureRepository.CreateAsync(featureModel);
 
             var featureResponseDto = _mapper.Map<FeatureResponseDto>(createdFeature);
 
@@ -72,19 +72,20 @@ namespace ToggleBuddy.API.Services.FeatureServices
             return new ServiceResponse<FeatureResponseDto> { Result = _mapper.Map<FeatureResponseDto>(feature), Message = "Feature deleted successfully", Status = ResponseStatus.Success };
         }
 
-        public async Task<ServiceResponse<FeatureResponseDto>> GetFeatureDetailsByProjectIdAsync(Guid projectId, Guid featureId)
+        public async Task<ServiceResponse<FeatureResponseDto>> GetFeatureDetailsByProjectIdAsync( Guid featureId)
         {
             var userId = _httpContextAccessor?.HttpContext?.User.GetLoggedInUserId();
 
-            var project = await _projectRepository.GetProjectByIdAsync(projectId);
+            // var project = await _projectRepository.GetProjectByIdAsync(projectId);
 
-            if (project == null)
-                return new ServiceResponse<FeatureResponseDto> { Message = "Invalid project or not found", Status = ResponseStatus.NotFound };
+            // if (project == null)
+            //     return new ServiceResponse<FeatureResponseDto> { Message = "Invalid project or not found", Status = ResponseStatus.NotFound };
 
-            if (project.UserId != userId)
-                return new ServiceResponse<FeatureResponseDto> { Message = "You are not authorized to view a feature for this project", Status = ResponseStatus.Unauthorized };
+            // if (project.UserId != userId)
+            //     return new ServiceResponse<FeatureResponseDto> { Message = "You are not authorized to view a feature for this project", Status = ResponseStatus.Unauthorized };
 
-            var feature = await _featureRepository.ShowAsync(projectId, featureId);
+            var feature = await _featureRepository.ShowAsync(featureId);
+            
 
             if (feature == null)
                 return new ServiceResponse<FeatureResponseDto> { Message = "Feature not found", Status = ResponseStatus.NotFound };
@@ -92,48 +93,86 @@ namespace ToggleBuddy.API.Services.FeatureServices
             return new ServiceResponse<FeatureResponseDto> { Result = _mapper.Map<FeatureResponseDto>(feature), Message = "Feature retrieved successfully", Status = ResponseStatus.Success };
         }
 
-        public async Task<ServiceResponse<List<FeatureResponseDto>>> GetFeaturesByProjectIdAsync(Guid projectId)
+        public Task<ServiceResponse<List<FeatureResponseDto>>> GetFeaturesByProjectIdAsync(Guid featureId)
         {
-            var userId = _httpContextAccessor?.HttpContext?.User.GetLoggedInUserId();
-
-            var project = await _projectRepository.GetProjectByIdAsync(projectId);
-            if (project == null)
-                return new ServiceResponse<List<FeatureResponseDto>> { Message = "Invalid project or not found", Status = ResponseStatus.NotFound };
-
-            if (project.UserId != userId)
-                return new ServiceResponse<List<FeatureResponseDto>> { Message = "You are not authorized to view features for this project", Status = ResponseStatus.Unauthorized };
-
-            var features = await _featureRepository.GetAllAsync(projectId);
-
-            if (features == null)
-                return new ServiceResponse<List<FeatureResponseDto>> { Message = "Features not found", Status = ResponseStatus.NotFound };
-
-            var projectResponseDtos = _mapper.Map<List<FeatureResponseDto>>(features);
-
-            return new ServiceResponse<List<FeatureResponseDto>> { Result = projectResponseDtos, Message = "Features retrieved successfully", Status = ResponseStatus.Success };
-
-            // return  list of features
+            throw new NotImplementedException();
         }
 
-        public async Task<ServiceResponse<UpdateFeatureResponseDto>> UpdateFeatureAsync(UpdateFeatureRequestDto featureRequestDto, Guid projectId, Guid featureId)
+        // public async Task<ServiceResponse<List<FeatureResponseDto>>> GetFeaturesByProjectIdAsync( Guid featureId)
+        // {
+        //     var userId = _httpContextAccessor?.HttpContext?.User.GetLoggedInUserId();
+
+        //     var project = await _projectRepository.GetProjectByIdAsync(projectId);
+        //     if (project == null)
+        //         return new ServiceResponse<List<FeatureResponseDto>> { Message = "Invalid project or not found", Status = ResponseStatus.NotFound };
+
+        //     if (project.UserId != userId)
+        //         return new ServiceResponse<List<FeatureResponseDto>> { Message = "You are not authorized to view features for this project", Status = ResponseStatus.Unauthorized };
+
+        //     var features = await _featureRepository.GetAllAsync(projectId);
+
+        //     if (features == null)
+        //         return new ServiceResponse<List<FeatureResponseDto>> { Message = "Features not found", Status = ResponseStatus.NotFound };
+
+        //     var projectResponseDtos = _mapper.Map<List<FeatureResponseDto>>(features);
+
+        //     return new ServiceResponse<List<FeatureResponseDto>> { Result = projectResponseDtos, Message = "Features retrieved successfully", Status = ResponseStatus.Success };
+
+        //     // return  list of features
+        // }
+
+        public async Task<ServiceResponse<UpdateFeatureResponseDto>> UpdateFeatureAsync(UpdateFeatureRequestDto featureRequestDto,Guid projectId)
         {
             var userId = _httpContextAccessor?.HttpContext?.User.GetLoggedInUserId();
+            var project = await _projectRepository.GetWithFeaturesAsync(projectId);
+            if(project == null) return new ServiceResponse<UpdateFeatureResponseDto> { Message = "Invalid project or not found", Status = ResponseStatus.NotFound };
+             var feature = project.Features.FirstOrDefault();
+            if (feature == null) return new ServiceResponse<UpdateFeatureResponseDto> { Message = "Invalid project or not found", Status = ResponseStatus.NotFound };
+            
+            // Update the fields of the feature using the model
+            feature.Name = featureRequestDto.Name; 
+            feature.Description =featureRequestDto.Description;
+          
+            var updatedFeature = await _featureRepository.UpdateFeatureAsync(feature);
+              return new ServiceResponse<UpdateFeatureResponseDto> { Result = _mapper.Map<UpdateFeatureResponseDto>(updatedFeature), Message = "Feature updated successfully", Status = ResponseStatus.Success }; 
+            
+            //  return new ServiceResponse<UpdateFeatureResponseDto> { Result = _mapper.Map<UpdateFeatureResponseDto>(feature), Message = "Features retrieved successfully", Status = ResponseStatus.Success };
 
-            var project = await _projectRepository.GetProjectByIdAsync(projectId);
-            if (project == null)
-                return new ServiceResponse<UpdateFeatureResponseDto> { Message = "Invalid project or not found", Status = ResponseStatus.NotFound };
+            //    return new ServiceResponse<UpdateFeatureResponseDto> { Message = "Feature not found", Status = ResponseStatus.NotFound };
+            //   // var project = feature.ProjectId;
+            //   // if(project == null)
+            //     return new ServiceResponse<UpdateFeatureResponseDto> { Message = "Feature not found", Status = ResponseStatus.NotFound };
+            //    return new ServiceResponse<UpdateFeatureResponseDto> { Result = _mapper.Map<UpdateFeatureResponseDto>(feature), Message = "Feature updated successfully", Status = ResponseStatus.Success };
+            
 
-            if (project.UserId != userId)
-                return new ServiceResponse<UpdateFeatureResponseDto> { Message = "You are not authorized to update a feature for this project", Status = ResponseStatus.Unauthorized };
+            // var project = await _projectRepository.GetProjectByIdAsync(projectId);
+            // if (project == null)
+            //     return new ServiceResponse<UpdateFeatureResponseDto> { Message = "Invalid project or not found", Status = ResponseStatus.NotFound };
 
-            var featureModel = _mapper.Map<Feature>(featureRequestDto);
+            // if (project.UserId != userId)
+            //     return new ServiceResponse<UpdateFeatureResponseDto> { Message = "You are not authorized to update a feature for this project", Status = ResponseStatus.Unauthorized };
 
-            var updatedFeature = await _featureRepository.UpdateAsync(featureModel, projectId, featureId);
+            // var featureModel = _mapper.Map<Feature>(featureRequestDto);
 
-            if (updatedFeature == null)
-                return new ServiceResponse<UpdateFeatureResponseDto> { Message = "Feature not found", Status = ResponseStatus.NotFound };
+            // var updatedFeature = await _featureRepository.UpdateAsync(featureModel, projectId, featureId);
 
-            return new ServiceResponse<UpdateFeatureResponseDto> { Result = _mapper.Map<UpdateFeatureResponseDto>(updatedFeature), Message = "Feature updated successfully", Status = ResponseStatus.Success };
+            // if (updatedFeature == null)
+            //     return new ServiceResponse<UpdateFeatureResponseDto> { Message = "Feature not found", Status = ResponseStatus.NotFound };
+
+            // return new ServiceResponse<UpdateFeatureResponseDto> { Result = _mapper.Map<UpdateFeatureResponseDto>(updatedFeature), Message = "Feature updated successfully", Status = ResponseStatus.Success };
+        }
+ 
+         //new added
+        public async  Task<ServiceResponse<FeatureResponseDto>> GetFeatureByProjectId(Guid projectId)
+        {
+            var userId = _httpContextAccessor?.HttpContext?.User.GetLoggedInUserId();
+            var project = await _projectRepository.GetWithFeaturesAsync(projectId);
+            if (project == null) return new ServiceResponse<FeatureResponseDto> { Message = "Invalid project or not found", Status = ResponseStatus.NotFound };
+
+
+            var feature = project.Features.FirstOrDefault();
+            if (feature == null) return new ServiceResponse<FeatureResponseDto> { Message = "Invalid project or not found", Status = ResponseStatus.NotFound };
+             return new ServiceResponse<FeatureResponseDto> { Result = _mapper.Map<FeatureResponseDto>(feature), Message = "Features retrieved successfully", Status = ResponseStatus.Success };
         }
 
     }
